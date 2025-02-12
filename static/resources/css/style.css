@@ -1,0 +1,15 @@
+/* Uniform image sizing */
+.card-img-top {
+    object-fit: cover;
+    height: 200px; /* For item list */
+}
+
+.carousel-item img {
+    object-fit: cover;
+    height: 400px; /* For carousel */
+}
+
+.card:hover {
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}

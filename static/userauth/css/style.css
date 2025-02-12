@@ -1,0 +1,12 @@
+body {
+    font-family: 'Poppins', sans-serif;
+}
+.navbar-nav .nav-link:hover {
+    color: #ffffff !important;
+    transform: scale(1.1);
+}
+
+.card:hover {
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}{{ item.name }} - NeighborLink{% endblock %}
+{% block content %}
+    <!-- Back Button -->
+    {% if user.is_superuser %}
+        <div class="text-start mb-3">
+            <a href="{% url 'manage_items' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Items
+            </a>
+        </div>
+    {% else %}
+        <div class="text-start mb-3">
+            <a href="{% url 'item_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Items
+            </a>
+        </div>
+    {% endif %}
+
+    <h2 class="text-center">{{ item.name }}</h2>
+    <div class="row g-4"> <!-- Added gap for spacing between columns -->
+        <!-- Images Section -->
+        <div class="col-md-6">
+            <div class="card shadow h-100" style="border-radius: 15px;">
+                <div class="card-body p-0">
+                    <h5 class="card-title text-center bg-light p-3 m-0" style="border-radius: 15px 15px 0 0;">Images</h5>
+                    <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% for image in item.images.all %}
+                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                    <div style="height: 400px; overflow: hidden;">
+                                        <img src="{{ image.image.url }}" class="d-block w-100 h-100 object-fit-cover" 
+                                             alt="{{ item.name }}">
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="carousel-item active">
+                                    <div style="height: 400px; overflow: hidden;">
+                                        <img src="https://via.placeholder.com/800x400" class="d-block w-100 h-100 object-fit-cover" 
+                                             alt="Placeholder Image">
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Section -->
+        <div class="col-md-6">
+            <div class="card shadow h-100" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h5 class="mb-3">Details</h5>
+                    <p><strong>Description:</strong> 
+                        <span class="text-muted">{{ item.description|linebreaksbr }}</span>
+                    </p>
+                    <p><strong>Availability:</strong> 
+                        <span class="badge {% if item.availability_start and item.availability_end %}bg-success{% else %}bg-danger{% endif %}">
+                            {% if item.availability_start and item.availability_end %}
+                                Available from {{ item.availability_start|date:"M d, Y" }} to {{ item.availability_end|date:"M d, Y" }}
+                            {% elif item.availability_start %}
+                                Available from {{ item.availability_start|date:"M d, Y" }}
+                            {% elif item.availability_end %}
+                                Available until {{ item.availability_end|date:"M d, Y" }}
+                            {% else %}
+                                Not specified
+                            {% endif %}
+                        </span>
+                    </p>
+                    <p><strong>Owner:</strong> 
+                        <span class="text-muted">{{ item.owner.username }}</span>
+                    </p>
+                    {% if item.owner == request.user %}
+                        <div class="mt-4">
+                            <a href="{% url 'edit_item' item.id %}" class="btn btn-warning me-2">Edit</a>
+                            <a href="{% url 'delete_item' item.id %}" class="btn btn-danger">Delete</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Items - NeighborLink{% endblock %}
+{% block content %}
+    <h2 class="text-center">All Items</h2>
+
+    <!-- Add Item Button -->
+    <div class="text-end mb-3">
+        <a href="{% url 'create_item' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Add Item
+        </a>
+    </div>
+
+    <!-- Item List -->
+    <div class="row">
+        {% for item in items %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow h-100">
+                    <div style="height: 200px; overflow: hidden;">
+                        {% if item.images.first %}
+                            <img src="{{ item.images.first.image.url }}" alt="{{ item.name }}" 
+                                 class="card-img-top w-100 h-100 object-fit-cover">
+                        {% else %}
+                            <img src="https://via.placeholder.com/300" alt="Placeholder Image" 
+                                 class="card-img-top w-100 h-100 object-fit-cover">
+                        {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ item.name }}</h5>
+                        <p class="card-text flex-grow-1">{{ item.description|truncatewords:10 }}</p>
+                        <p class="card-text text-muted small">
+                            {% if item.availability_start and item.availability_end %}
+                                <strong>Available:</strong> {{ item.availability_start|date:"M d, Y" }} to {{ item.availability_end|date:"M d, Y" }}
+                            {% elif item.availability_start %}
+                                <strong>Available from:</strong> {{ item.availability_start|date:"M d, Y" }}
+                            {% elif item.availability_end %}
+                                <strong>Available until:</strong> {{ item.availability_end|date:"M d, Y" }}
+                            {% else %}
+                                <strong>Availability:</strong> Not specified
+                            {% endif %}
+                        </p>
+                        <a href="{% url 'item_detail' item.id %}" class="btn btn-primary mt-auto">View Details</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center">No items available.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

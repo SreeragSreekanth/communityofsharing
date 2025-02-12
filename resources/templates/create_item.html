@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Create Item - NeighborLink{% endblock %}
+{% block content %}
+    <h2 class="text-center">Create a New Item</h2>
+    <form method="post" enctype="multipart/form-data" class="w-75 mx-auto">
+        {% csrf_token %}
+        {{ item_form|crispy }}
+        <h4>Upload Images (At least one image is required)</h4>
+        <div id="image-fields">
+            <div class="mb-3">
+                <input type="file" name="images" class="form-control" required>
+            </div>
+        </div>
+        <button type="button" id="add-photo" class="btn btn-secondary mb-3">Add Photo</button>
+        <button type="submit" class="btn btn-primary w-100">Create Item</button>
+    </form>
+{% endblock %}

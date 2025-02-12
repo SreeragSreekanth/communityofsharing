@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Manage Items - Admin Panel{% endblock %}
+{% block content %}
+    <!-- Header Section -->
+    <div class="text-center py-4" style="background-color: #f8f9fa; border-radius: 10px;">
+        <h2 class="fw-bold">Manage Items</h2>
+    </div>
+
+    <!-- Display Messages -->
+    {% if messages %}
+        <div class="mb-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} text-center">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Search Form -->
+    <div class="mb-3">
+        <form method="get" class="d-flex">
+            <input type="text" name="search" class="form-control me-2" placeholder="Search by name">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+
+    <!-- Item Table Section -->
+    <div class="mt-5">
+        <table class="table table-hover table-bordered shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">Availability Dates</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.owner.username }}</td>
+                        <td>
+                            {% if item.availability_start and item.availability_end %}
+                                {{ item.availability_start|date:"M d, Y" }} to {{ item.availability_end|date:"M d, Y" }}
+                            {% elif item.availability_start %}
+                                From {{ item.availability_start|date:"M d, Y" }}
+                            {% elif item.availability_end %}
+                                Until {{ item.availability_end|date:"M d, Y" }}
+                            {% else %}
+                                Not specified
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'item_detail' item.id %}" class="btn btn-primary btn-sm me-2">
+                                <i class="fas fa-eye me-1"></i>View Details
+                            </a>
+                            <a href="{% url 'delete_item' item.id %}" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No items found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

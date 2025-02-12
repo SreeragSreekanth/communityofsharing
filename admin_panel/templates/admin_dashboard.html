@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard - NeighborLink{% endblock %}
+{% block content %}
+    <h2 class="text-center">Admin Dashboard</h2>
+
+    <!-- Analytics Section -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text display-4">{{ total_users }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Approved Users</h5>
+                    <p class="card-text display-4">{{ approved_users }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Users</h5>
+                    <p class="card-text display-4">{{ pending_users }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item Analytics Section -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Items</h5>
+                    <p class="card-text display-4">{{ total_items }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Available Items</h5>
+                    <p class="card-text display-4">{{ available_items }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-danger text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Unavailable Items</h5>
+                    <p class="card-text display-4">{{ unavailable_items }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row">
+        <div class="col-md-6">
+            <a href="{% url 'manage_users' %}" class="btn btn-info btn-lg w-100 mb-3">Manage All Users</a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'pending_users' %}" class="btn btn-warning btn-lg w-100 mb-3">View Pending Users</a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'manage_items' %}" class="btn btn-secondary btn-lg w-100 mb-3">Manage Items</a>
+        </div>
+    </div>
+{% endblock %}

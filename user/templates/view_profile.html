@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Profile - {{ user.username }} | NeighborLink{% endblock %}
+{% block content %}
+    <h2 class="text-center">Profile: {{ user.username }}</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow p-4" style="border-radius: 15px;">
+                <!-- Profile Picture -->
+                <div class="text-center mb-4">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" 
+                             class="rounded-circle mx-auto d-block" width="150" height="150">
+                    {% else %}
+                        <img src="https://via.placeholder.com/150" alt="Default Profile Picture" 
+                             class="rounded-circle mx-auto d-block" width="150" height="150">
+                    {% endif %}
+                </div>
+
+                <!-- Profile Details -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <strong><i class="fas fa-user me-2"></i>Username:</strong> 
+                                <span class="text-muted">{{ user.username }}</span>
+                            </li>
+                            <li class="mb-3">
+                                <strong><i class="fas fa-envelope me-2"></i>Email:</strong> 
+                                <span class="text-muted">{{ user.email }}</span>
+                            </li>
+                            <li class="mb-3">
+                                <strong><i class="fas fa-phone me-2"></i>Phone Number:</strong> 
+                                <span class="text-muted">{{ profile.phone_number|default:"Not provided" }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <strong><i class="fas fa-info-circle me-2"></i>Bio:</strong> 
+                                <span class="text-muted">{{ profile.bio|default:"No bio available" }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
