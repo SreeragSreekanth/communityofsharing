@@ -49,7 +49,6 @@
                                 </a>
                             </li>
                         {% else %}
-                            <!-- User Links for Regular Users -->
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="{% url 'user_dashboard' %}">
                                     <i class="fas fa-home me-2"></i> Dashboard
@@ -68,6 +67,18 @@
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="#">
                                     <i class="fas fa-hand-holding-heart me-2"></i> Borrowed Items
+                                </a>
+                            </li>
+                            <!-- New Link for Searching Items -->
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="{% url 'search_items' %}">
+                                    <i class="fas fa-search me-2"></i> Search Items
+                                </a>
+                            </li>
+                            <!-- New Link for Managing Requests -->
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="{% url 'manage_requests' %}">
+                                    <i class="fas fa-tasks me-2"></i> Manage Requests
                                 </a>
                             </li>
                             <li class="nav-item">

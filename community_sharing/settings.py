@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'admin_panel',
     'user',
     'resources',
+    'borrow_requests',
 ]
 
 MIDDLEWARE = [

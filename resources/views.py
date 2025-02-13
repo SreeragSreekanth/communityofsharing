@@ -61,7 +61,7 @@ def delete_item(request, item_id):
     return redirect('item_list')
 
 def item_list(request):
-    items = Item.objects.all()
+    items = Item.objects.filter(owner=request.user)
     context = {'items': items}
     return render(request, 'item_list.html', context)
 

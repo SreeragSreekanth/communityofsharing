@@ -3,17 +3,54 @@
 
 {% block title %}Create Item - NeighborLink{% endblock %}
 {% block content %}
-    <h2 class="text-center">Create a New Item</h2>
+    <!-- Back Button -->
+    <div class="text-start mb-3">
+        <a href="{% url 'item_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Items
+        </a>
+    </div>
+
+    <h2 class="text-center mb-4">Create a New Item</h2>
+
     <form method="post" enctype="multipart/form-data" class="w-75 mx-auto">
         {% csrf_token %}
-        {{ item_form|crispy }}
-        <h4>Upload Images (At least one image is required)</h4>
-        <div id="image-fields">
-            <div class="mb-3">
-                <input type="file" name="images" class="form-control" required>
+
+        <!-- Item Details Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Item Details</h5>
+                {{ item_form|crispy }}
             </div>
         </div>
-        <button type="button" id="add-photo" class="btn btn-secondary mb-3">Add Photo</button>
-        <button type="submit" class="btn btn-primary w-100">Create Item</button>
+
+        <!-- Image Upload Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Upload Images</h5>
+                <p class="text-muted mb-3">At least one image is required.</p>
+
+                <!-- Image Fields -->
+                <div id="image-fields">
+                    <div class="mb-3">
+                        <input type="file" name="images" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- Add Photo Button -->
+                <button type="button" id="add-photo" class="btn btn-secondary mb-3">
+                    <i class="fas fa-plus me-2"></i>Add Photo
+                </button>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary flex-grow-1 me-2">
+                <i class="fas fa-check me-2"></i>Create Item
+            </button>
+            <a href="{% url 'item_list' %}" class="btn btn-light border flex-grow-1" style="border-radius: 8px;">
+                <i class="fas fa-times me-2"></i>Cancel
+            </a>
+        </div>
     </form>
 {% endblock %}

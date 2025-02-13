@@ -8,9 +8,15 @@
                 <i class="fas fa-arrow-left me-2"></i>Back to Items
             </a>
         </div>
-    {% else %}
+    {% elif item.owner == request.user %}
         <div class="text-start mb-3">
             <a href="{% url 'item_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Items
+            </a>
+        </div>
+    {% else %}
+        <div class="text-start mb-3">
+            <a href="{% url 'search_items' %}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Back to Items
             </a>
         </div>
@@ -83,6 +89,16 @@
                             <a href="{% url 'edit_item' item.id %}" class="btn btn-warning me-2">Edit</a>
                             <a href="{% url 'delete_item' item.id %}" class="btn btn-danger">Delete</a>
                         </div>
+                    {% else %}
+                        {% if item.availability_end and item.availability_end < now %}
+                            <button class="btn btn-secondary w-100 disabled">
+                                <i class="fas fa-ban me-2"></i>Not Available
+                            </button>
+                        {% elif item.owner != request.user %}
+                            <a href="{% url 'send_borrow_request' item.id %}" class="btn btn-primary w-100">
+                                <i class="fas fa-hand-holding-heart me-2"></i>Request to Borrow
+                            </a>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>

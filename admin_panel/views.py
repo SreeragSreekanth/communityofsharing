@@ -3,6 +3,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import get_user_model
 from resources.models import Item
+from django.utils import timezone 
+from django.db import models
 
 
 User = get_user_model()
@@ -11,17 +13,30 @@ def is_superuser(user):
     return user.is_superuser
 
 
+
 @login_required
 @user_passes_test(is_superuser)  # Only superusers can access this view
 def admin_dashboard(request):
     # Fetch analytics data
     total_users = User.objects.filter(is_superuser=False).count()
-    approved_users = User.objects.filter(is_approved=True,is_superuser=False).count()
-    pending_users = User.objects.filter(is_approved=False,is_superuser=False).count()
+    approved_users = User.objects.filter(is_approved=True, is_superuser=False).count()
+    pending_users = User.objects.filter(is_approved=False, is_superuser=False).count()
 
+    # Item analytics
     total_items = Item.objects.count()
-    available_items = Item.objects.exclude(availability_start__isnull=True, availability_end__isnull=True).count()
-    unavailable_items = Item.objects.filter(availability_start__isnull=True, availability_end__isnull=True).count()
+    now = timezone.now().date()  # Get the current date
+
+    # Available items: Items with availability_start and/or availability_end in the future or ongoing
+    available_items = Item.objects.filter(
+        availability_start__lte=now,  # Start date is today or earlier
+        availability_end__gte=now    # End date is today or later
+    ).count()
+
+    # Unavailable items: Items with no dates OR end date has passed
+    unavailable_items = Item.objects.filter(
+        models.Q(availability_end__lt=now) |  # End date has passed
+        models.Q(availability_start__isnull=True, availability_end__isnull=True)  # No dates set
+    ).count()
 
     context = {
         'total_users': total_users,

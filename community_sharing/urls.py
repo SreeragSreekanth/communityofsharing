@@ -9,7 +9,8 @@ urlpatterns = [
     path('',include('userauth.urls')),
     path('',include('admin_panel.urls')),
     path('',include('user.urls')),
-    path('',include('resources.urls'))
+    path('',include('resources.urls')),
+    path('',include('borrow_requests.urls')),
 ]
 
 if settings.DEBUG:

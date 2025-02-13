@@ -3,23 +3,71 @@
 
 {% block title %}Edit Item - NeighborLink{% endblock %}
 {% block content %}
-    <h2 class="text-center">Edit Item: {{ item.name }}</h2>
+    <!-- Back Button -->
+    <div class="text-start mb-3">
+        <a href="{% url 'item_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Items
+        </a>
+    </div>
+
+    <h2 class="text-center mb-4">Edit Item: {{ item.name }}</h2>
+
     <form method="post" enctype="multipart/form-data" class="w-75 mx-auto">
         {% csrf_token %}
-        {{ item_form|crispy }}
-        <h4>Manage Images</h4>
-        <div id="image-fields">
-            {% for image in item.images.all %}
-                <div class="mb-3">
-                    <img src="{{ image.image.url }}" alt="Existing Image" width="100" class="mb-2">
-                    <input type="checkbox" name="delete_images" value="{{ image.id }}"> Delete
-                </div>
-            {% endfor %}
-            <div class="mb-3">
-                <input type="file" name="images" class="form-control">
+
+        <!-- Item Details Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Item Details</h5>
+                {{ item_form|crispy }}
             </div>
         </div>
-        <button type="button" id="add-photo" class="btn btn-secondary mb-3">Add Photo</button>
-        <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+
+        <!-- Image Management Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Manage Images</h5>
+
+                <!-- Existing Images -->
+                {% if item.images.all %}
+                    <div class="row">
+                        {% for image in item.images.all %}
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <img src="{{ image.image.url }}" alt="Existing Image" class="card-img-top object-fit-cover" style="height: 150px;">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" name="delete_images" value="{{ image.id }}" class="form-check-input"> Delete
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No images uploaded yet.</p>
+                {% endif %}
+
+                <!-- Add New Images -->
+                <div id="image-fields">
+                    <div class="mb-3">
+                        <input type="file" name="images" class="form-control">
+                    </div>
+                </div>
+                <button type="button" id="add-photo" class="btn btn-secondary mb-3">
+                    <i class="fas fa-plus me-2"></i>Add Photo
+                </button>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary flex-grow-1 me-2">
+                <i class="fas fa-save me-2"></i>Save Changes
+            </button>
+            <a href="{% url 'item_list' %}" class="btn btn-light border flex-grow-1" style="border-radius: 8px;">
+                <i class="fas fa-times me-2"></i>Cancel
+            </a>
+        </div>
     </form>
 {% endblock %}
