@@ -15,3 +15,25 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    console.log("JavaScript file loaded successfully!");
+
+    // Confirmation for Delete Item
+    document.querySelectorAll(".delete-item").forEach(button => {
+        button.addEventListener("click", function (event) {
+            if (!confirm("Are you sure you want to delete this item? This action cannot be undone.")) {
+                event.preventDefault();
+            }
+        });
+    });
+
+    // Confirmation for Borrow Request
+    document.querySelectorAll(".request-borrow").forEach(button => {
+        button.addEventListener("click", function (event) {
+            if (!confirm("Are you sure you want to send a borrow request for this item?")) {
+                event.preventDefault();
+            }
+        });
+    });
+});

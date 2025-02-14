@@ -3,6 +3,17 @@
 
 {% block title %}Search Items - NeighborLink{% endblock %}
 {% block content %}
+
+    {% if messages %}
+    <div class="mb-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} text-center">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
     <h2 class="text-center">Search Items</h2>
 
     <!-- Search Form -->

@@ -6,8 +6,7 @@ from .models import BorrowRequest
 from .forms import BorrowRequestForm, SearchForm
 from django.utils import timezone
 from django.core.paginator import Paginator
-# from notifications.models import Notification  # Import Notification from the other app
-
+from notifications.models import Notification  # Import Notification from the other app
 
 
 @login_required
@@ -33,27 +32,6 @@ def search_items(request):
 
     return render(request, 'search_items.html', {'form': form, 'items': items, 'query': query})
 
-@login_required
-def send_borrow_request(request, item_id):
-    item = get_object_or_404(Item, id=item_id)
-    if request.method == 'POST':
-        form = BorrowRequestForm(request.POST)
-        if form.is_valid():
-            borrow_request = form.save(commit=False)
-            borrow_request.borrower = request.user
-            borrow_request.item = item
-            borrow_request.save()
-
-            # Notify the lender
-            # Notification.objects.create(
-            #     user=item.owner,
-            #     message=f"{request.user.username} has requested to borrow your item: {item.name}."
-            # )
-            # messages.success(request, "Your borrowing request has been sent.")
-            # return redirect('search_items')
-    else:
-        form = BorrowRequestForm(initial={'item': item})
-    return render(request, 'send_request.html', {'form': form, 'item': item})
 
 @login_required
 def manage_requests(request):
@@ -83,13 +61,44 @@ def update_request_status(request, request_id):
         borrow_request.save()
 
         # Notify the borrower about the status change
-        # Notification.objects.create(
-        #     user=borrow_request.borrower,
-        #     message=f"Your request to borrow {borrow_request.item.name} has been {status}."
-        # )
+        Notification.objects.create(
+            user=borrow_request.borrower,
+            message=f"Your request to borrow {borrow_request.item.name} has been {status}."
+        )
         messages.success(request, f"The request has been marked as {status}.")
     else:
         messages.error(request, "Invalid status provided.")
 
     # Redirect back to the manage requests page
     return redirect('manage_requests')
+
+
+@login_required
+def borrow_request(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    now = timezone.now().date()
+
+    # Check if item is available and the user is not the owner
+    is_available = (
+        item.availability_start and item.availability_end and
+        item.availability_start <= now <= item.availability_end
+    )
+
+    if is_available and item.owner != request.user:
+        # Create a new BorrowRequest object
+        BorrowRequest.objects.create(
+            borrower=request.user,
+            item=item,
+            status='pending'  # Default status
+        )
+
+        # Notify the lender
+        Notification.objects.create(
+            user=item.owner,
+            message=f"{request.user.username} has requested to borrow your item: {item.name}."
+        )
+        messages.success(request, "Your borrowing request has been sent.")
+    else:
+        messages.error(request, "This item is not available for borrowing.")
+
+    return redirect('item_detail', item_id=item.id)

@@ -11,6 +11,7 @@ urlpatterns = [
     path('',include('user.urls')),
     path('',include('resources.urls')),
     path('',include('borrow_requests.urls')),
+    path('',include('notifications.urls')),
 ]
 
 if settings.DEBUG:

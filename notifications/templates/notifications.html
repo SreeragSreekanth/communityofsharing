@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Notifications - NeighborLink{% endblock %}
+{% block content %}
+    <h2 class="text-center mb-4">Notifications</h2>
+
+    {% if notifications %}
+        <div class="list-group">
+            {% for notification in notifications %}
+                <div class="list-group-item {% if not notification.is_read %}list-group-item-info{% endif %}">
+                    <p class="mb-0">{{ notification.message }}</p>
+                    <small class="text-muted">{{ notification.created_at|timesince }} ago</small>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-muted">You have no notifications.</p>
+    {% endif %}
+{% endblock %}

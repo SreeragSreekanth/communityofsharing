@@ -3,6 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory
 from .models import Item, ItemImage
 from .forms import ItemForm, ItemImageForm
+from .models import Item
+from borrow_requests.models import BorrowRequest
+from borrow_requests.forms import BorrowRequestForm
+from notifications.models import Notification
+from django.contrib import messages
+from django.utils import timezone
+
 
 @login_required
 def create_item(request):
@@ -65,7 +72,20 @@ def item_list(request):
     context = {'items': items}
     return render(request, 'item_list.html', context)
 
+@login_required
 def item_detail(request, item_id):
     item = get_object_or_404(Item, id=item_id)
-    context = {'item': item}
+    now = timezone.now().date()
+
+    # Check if the item is available for borrowing
+    is_available = (
+        item.availability_start and item.availability_end and
+        item.availability_start <= now <= item.availability_end
+    )
+
+    context = {
+        'item': item,
+        'is_available': is_available,
+        'now': now,
+    }
     return render(request, 'item_detail.html', context)
