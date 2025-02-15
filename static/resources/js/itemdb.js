@@ -1,32 +1,27 @@
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("JS Loaded 🚀"); // Debugging step 1
+    console.log("JS Loaded 🚀");
 
-    // DELETE ITEM CONFIRMATION
-    let deleteButton = document.querySelector(".delete-item");
-    if (deleteButton) {
-        deleteButton.addEventListener("click", function (event) {
+    // DELETE ITEM CONFIRMATION (Handles multiple delete buttons)
+    document.querySelectorAll(".delete-item").forEach(button => {
+        button.addEventListener("click", function (event) {
             if (!confirm("Are you sure you want to delete this item? This action cannot be undone.")) {
                 event.preventDefault();
-            }
-        });
-    }
-
-    // BORROW REQUEST CONFIRMATION (Fixed)
-    let borrowForm = document.getElementById("borrow-request-form");
-    if (borrowForm) {
-        console.log("Borrow form found ✅"); // Debugging step 2
-
-        borrowForm.addEventListener("submit", function (event) {
-            let userConfirmed = confirm("Are you sure you want to request to borrow this item?");
-            
-            if (!userConfirmed) {
-                event.preventDefault();
-                console.log("Borrow request cancelled ❌"); // Debugging step 3
             } else {
-                console.log("Borrow request submitted ✅"); // Debugging step 4
+                this.disabled = true; // Prevent multiple clicks
             }
         });
-    } else {
-        console.log("Borrow form NOT found ❌"); // Debugging step 5
+    });
+
+    // BORROW REQUEST CONFIRMATION (Fix double alert issue)
+    let borrowForm = document.getElementById("borrow-request-form");
+    if (borrowForm && !borrowForm.dataset.listener) {  // Prevent duplicate event binding
+        borrowForm.dataset.listener = "true";  // Mark as processed
+        borrowForm.addEventListener("submit", function (event) {
+            if (!confirm("Are you sure you want to request to borrow this item?")) {
+                event.preventDefault();
+            } else {
+                borrowForm.querySelector("button[type='submit']").disabled = true; // Prevent multiple submits
+            }
+        });
     }
 });

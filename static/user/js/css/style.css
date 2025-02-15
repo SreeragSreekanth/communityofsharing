@@ -1,0 +1,8 @@
+.dropdown-menu {
+    right: 0; /* Aligns dropdown with the right edge */
+    left: auto; /* Prevents it from expanding too much */
+    max-height: 300px; /* Adds scrolling if it's too long */
+    overflow-y: auto;  /* Enables vertical scrolling */
+    min-width: 200px;  /* Ensures it doesn't shrink too much */
+    margin-right: 10px; /* Pushes it slightly left to avoid scrollbar */
+}

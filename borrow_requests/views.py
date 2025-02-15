@@ -4,9 +4,13 @@ from django.contrib import messages
 from resources.models import Item
 from .models import BorrowRequest
 from .forms import BorrowRequestForm, SearchForm
-from django.utils import timezone
+from django.utils.timezone import now
 from django.core.paginator import Paginator
-from notifications.models import Notification  # Import Notification from the other app
+from notifications.models import Notification 
+from django.db.models import Q
+from django.utils import timezone
+
+
 
 
 @login_required
@@ -16,7 +20,9 @@ def search_items(request):
     query = request.GET.get('query', '')  # Get the search query from GET parameters
 
     # Base queryset: Exclude the user's own items and filter by availability
-    queryset = Item.objects.exclude(owner=request.user).filter(
+    borrowed_item_ids = BorrowRequest.objects.filter(status='approved').values_list('item_id', flat=True)
+    # Base queryset: Exclude the user's own items and items that are currently borrowed or not returned
+    queryset = Item.objects.exclude(owner=request.user).exclude(id__in=borrowed_item_ids).filter(
         availability_start__lte=now,
         availability_end__gte=now
     )
@@ -34,71 +40,94 @@ def search_items(request):
 
 
 @login_required
-def manage_requests(request):
-    # Fetch requests sent by the current user (borrower)
-    sent_requests = BorrowRequest.objects.filter(borrower=request.user).order_by('-created_at')
+def request_borrow(request, item_id):
+    """Allows a user to request to borrow an item."""
+    item = get_object_or_404(Item, id=item_id)
 
-    # Fetch requests received by the current user (lender)
-    received_requests = BorrowRequest.objects.filter(item__owner=request.user).order_by('-created_at')
+    if item.owner == request.user:
+        messages.error(request, "You cannot borrow your own item.")
+        return redirect('item_detail', item_id=item.id)
 
-    context = {
-        'sent_requests': sent_requests,
-        'received_requests': received_requests,
-    }
-    return render(request, 'manage_requests.html', context)
+    # Check if there is already a pending request
+    existing_request = BorrowRequest.objects.filter(borrower=request.user, item=item).exists()
+    if existing_request:
+        messages.error(request, "You have already requested this item.")
+        return redirect('item_detail', item.id)
+
+    # Create a new borrow request
+    BorrowRequest.objects.create(borrower=request.user, item=item, status='pending')
+
+    # Notify the owner
+    Notification.objects.create(
+        user=item.owner,
+        message=f"{request.user.username} has requested to borrow {item.name}."
+    )
+
+    messages.success(request, "Your borrow request has been sent.")
+    return redirect('item_detail', item.id)
 
 @login_required
-def update_request_status(request, request_id):
-    # Get the borrowing request object
-    borrow_request = get_object_or_404(BorrowRequest, id=request_id, item__owner=request.user)
-    
-    # Get the new status from the query parameters
-    status = request.GET.get('status')
+def manage_requests(request):
+    """Display both sent and received borrow requests."""
+    sent_requests = BorrowRequest.objects.filter(borrower=request.user).order_by('-requested_at')
+    received_requests = BorrowRequest.objects.filter(item__owner=request.user).order_by('-requested_at')
 
-    # Validate the status and update the request
-    if status in ['approved', 'rejected']:
-        borrow_request.status = status
-        borrow_request.save()
+    return render(request, 'manage_requests.html', {
+        'sent_requests': sent_requests,
+        'received_requests': received_requests,
+    })
 
-        # Notify the borrower about the status change
-        Notification.objects.create(
-            user=borrow_request.borrower,
-            message=f"Your request to borrow {borrow_request.item.name} has been {status}."
-        )
-        messages.success(request, f"The request has been marked as {status}.")
-    else:
-        messages.error(request, "Invalid status provided.")
+def approve_request(request, request_id):
+    borrow_request = get_object_or_404(BorrowRequest, id=request_id)
+    borrow_request.status = 'approved'
+    borrow_request.save()
+    borrow_request.mark_as_approved()
+    Notification.objects.create(
+        user=borrow_request.borrower,
+        message=f"Your borrow request for '{borrow_request.item.name}' has been approved."
+    )
+    messages.success(request, "Request approved successfully.")
+    return redirect('manage_requests')
 
-    # Redirect back to the manage requests page
+def reject_request(request, request_id):
+    borrow_request = get_object_or_404(BorrowRequest, id=request_id)
+    borrow_request.status = 'rejected'
+    borrow_request.save()
+    Notification.objects.create(
+        user=borrow_request.borrower,
+        message=f"Your borrow request for '{borrow_request.item.name}' has been rejected."
+    )
+    messages.warning(request, "Request rejected.")
+    return redirect('manage_requests')
+
+def mark_as_returned(request, request_id):
+    borrow_request = get_object_or_404(BorrowRequest, id=request_id)
+    borrow_request.mark_as_returned()
+    messages.info(request, "Item marked as returned.")
     return redirect('manage_requests')
 
 
 @login_required
-def borrow_request(request, item_id):
-    item = get_object_or_404(Item, id=item_id)
-    now = timezone.now().date()
+def borrowed_items(request):
+    """
+    Displays BorrowRequests accepted by the current user (borrowed items).
+    """
+    borrowed_items = BorrowRequest.objects.filter(
+        borrower=request.user, status__in=['approved', 'returned']
+    ).select_related('item')
+    
+    return render(request, 'borrowed_items.html', {'borrowed_items': borrowed_items})
 
-    # Check if item is available and the user is not the owner
-    is_available = (
-        item.availability_start and item.availability_end and
-        item.availability_start <= now <= item.availability_end
-    )
+@login_required
+def lended_items(request):
+    """
+    Displays BorrowRequests for items owned by the current user (lended items).
+    Shows requests that are either approved or returned.
+    """
+    user_items = Item.objects.filter(owner=request.user)
+    
+    lended_items = BorrowRequest.objects.filter(
+        item__in=user_items, status__in=['approved', 'returned']
+    ).select_related('borrower', 'item')
 
-    if is_available and item.owner != request.user:
-        # Create a new BorrowRequest object
-        BorrowRequest.objects.create(
-            borrower=request.user,
-            item=item,
-            status='pending'  # Default status
-        )
-
-        # Notify the lender
-        Notification.objects.create(
-            user=item.owner,
-            message=f"{request.user.username} has requested to borrow your item: {item.name}."
-        )
-        messages.success(request, "Your borrowing request has been sent.")
-    else:
-        messages.error(request, "This item is not available for borrowing.")
-
-    return redirect('item_detail', item_id=item.id)
+    return render(request, 'lended_items.html', {'lended_items': lended_items})

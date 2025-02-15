@@ -5,29 +5,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}NeighborLink{% endblock %}</title>
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="{% static 'userauth/css/style.css' %}" rel="stylesheet">
-    <link href="{% static 'resources/css/style.css' %}" rel="stylesheet">
-
     
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{% static 'userauth/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'resources/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/style.css' %}">
+
 </head>
 <body class="d-flex flex-column min-vh-100">
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-gradient" style="background-color: #6f42c1;">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="#" style="font-family: 'Poppins', sans-serif;">NeighborLink</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}" style="font-family: 'Poppins', sans-serif;">
+                NeighborLink
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
-                        <!-- Admin Links for Superusers -->
                         {% if user.is_superuser %}
+                            <!-- Admin Links -->
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="{% url 'admin_dashboard' %}">
                                     <i class="fas fa-tachometer-alt me-2"></i> Admin Dashboard
@@ -43,32 +53,19 @@
                                     <i class="fas fa-boxes me-2"></i> Manage Items
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="{% url 'logout' %}">
-                                    <i class="fas fa-sign-out-alt me-2"></i> Logout
-                                </a>
-                            </li>
                         {% else %}
+                            <!-- User Links -->
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="{% url 'user_dashboard' %}">
                                     <i class="fas fa-home me-2"></i> Dashboard
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" href="{% url 'edit_profile' %}">
-                                    <i class="fas fa-user-edit me-2"></i> Edit Profile
+                                <a class="nav-link text-white" href="{% url 'manage_requests' %}">
+                                    <i class="fas fa-tasks me-2"></i> Manage Requests
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="{% url 'item_list' %}">
-                                    <i class="fas fa-list-alt me-2"></i> My Listings
-                                </a>
-                            </li>
-                            <!-- <li class="nav-item">
-                                <a class="nav-link text-white" href="#">
-                                    <i class="fas fa-hand-holding-heart me-2"></i> Borrowed Items
-                                </a>
-                            </li> -->
+                            
                             <li class="nav-item position-relative">
                                 <a class="nav-link text-white" href="{% url 'view_notifications' %}">
                                     <i class="fas fa-bell me-2"></i> Notifications
@@ -79,26 +76,34 @@
                                     {% endif %}
                                 </a>
                             </li>
-                            <!-- New Link for Searching Items -->
+                            
+                            <!-- Profile Dropdown -->
+                            <li class="nav-item dropdown ms-3 me-lg-4">
+                                <a class="nav-link dropdown-toggle text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user me-2"></i> Profile
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="profileDropdown">
+                                    <li><a class="dropdown-item" href="{% url 'edit_profile' %}"><i class="fas fa-user-edit me-2"></i> Edit Profile</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'item_list' %}"><i class="fas fa-list-alt me-2"></i> My Listings</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'borrowed_items' %}"><i class="fas fa-hand-holding-heart me-2"></i> Borrowed Items</a></li>
+                                    <li>
+                                    <li>
+                                            <a class="dropdown-item" href="{% url 'lended_items' %}">
+                                                <i class="fas fa-handshake me-2"></i> Lended Items
+                                            </a>
+                                    </li>
+                                    <hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                                </ul>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="{% url 'search_items' %}">
                                     <i class="fas fa-search me-2"></i> Search Items
                                 </a>
                             </li>
-                            <!-- New Link for Managing Requests -->
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="{% url 'manage_requests' %}">
-                                    <i class="fas fa-tasks me-2"></i> Manage Requests
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="{% url 'logout' %}">
-                                    <i class="fas fa-sign-out-alt me-2"></i> Logout
-                                </a>
-                            </li>
                         {% endif %}
-                        
                     {% else %}
+                        <!-- Guest Links -->
                         <li class="nav-item">
                             <a class="nav-link text-white" href="{% url 'login' %}">
                                 <i class="fas fa-sign-in-alt me-2"></i> Login
@@ -128,11 +133,12 @@
         <p class="mb-0">&copy; 2025 NeighborLink. All rights reserved.</p>
     </footer>
 
+    <!-- Scripts -->
     <script src="{% static 'user/js/script.js' %}"></script>
     <script src="{% static 'resources/js/addphoto.js' %}"></script>
     <script src="{% static 'resources/js/itemdb.js' %}"></script>
-
-    <!-- Bootstrap JS (Optional) -->
+    
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

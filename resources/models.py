@@ -12,6 +12,11 @@ class Item(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+    def is_borrowed(self):
+        return self.borrow_history.filter(returned_at__isnull=True).exists()
+    
+    
     def __str__(self):
         return self.name
 
