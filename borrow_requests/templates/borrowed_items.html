@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% block title %}Borrowing History{% endblock %}
 
 {% block content %}
@@ -16,6 +17,7 @@
                         <th>Borrowed Date</th>
                         <th>Return Date</th>
                         <th>Status</th>
+                        <th>Profile</th>  <!-- Added Profile Column -->
                     </tr>
                 </thead>
                 <tbody>
@@ -39,6 +41,11 @@
                                     <span class="badge bg-warning">Not Returned</span>
                                 {% endif %}
                             </td>
+                            <td>
+                                <a href="{% url 'view_profile' request.item.owner.id %}" class="btn btn-sm btn-info">
+                                    View Profile
+                                </a>
+                            </td> 
                         </tr>
                     {% endfor %}
                 </tbody>

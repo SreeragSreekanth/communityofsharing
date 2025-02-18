@@ -12,82 +12,74 @@
             </div>
         {% endfor %}
     </div>
-    {% endif %}
+{% endif %}
 
-    <div class="row">
-        <!-- Left Side: Sent Requests -->
-        <div class="col-md-6">
-            <h4 class="text-center">Requests Sent</h4>
-            {% if sent_requests %}
-                <div class="list-group">
-                    {% for request in sent_requests %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>Item:</strong> {{ request.item.name }} <br>
-                                <strong>To:</strong> {{ request.item.owner.username }} <br>
-                                <strong>Status:</strong> 
-                                <span class="badge {% if request.status == 'pending' %}bg-warning{% elif request.status == 'approved' %}bg-success{% else %}bg-danger{% endif %}">
-                                    {{ request.status }}
-                                </span>
-                            </div>
+<div class="row">
+    <!-- Left Side: Sent Requests -->
+    <div class="col-md-6">
+        <h4 class="text-center">Requests Sent</h4>
+        {% if sent_requests %}
+            <div class="list-group">
+                {% for request in sent_requests %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Item:</strong> {{ request.item.name }} <br>
+                            <strong>To:</strong> {{ request.item.owner.username }} <br>
+                            <strong>Status:</strong> 
+                            <span class="badge 
+                                {% if request.status == 'pending' %}bg-warning
+                                {% elif request.status == 'approved' %}bg-success
+                                {% elif request.status == 'rejected' %}bg-danger
+                                {% elif request.status == 'returned' %}bg-secondary
+                                {% endif %}">
+                                {{ request.get_status_display }}
+                            </span> <br>
+                            <strong>To be returned on:</strong> {{ request.return_date|default:"Not set" }}  <!-- Added return date -->
                         </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="text-center">No requests sent.</p>
-            {% endif %}
-        </div>
-    
-        <!-- Right Side: Received Requests -->
-        <div class="col-md-6">
-            <h4 class="text-center">Requests Received</h4>
-            {% if received_requests %}
-                <div class="list-group">
-                    {% for request in received_requests %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>Item:</strong> {{ request.item.name }} <br>
-                                <strong>From:</strong> {{ request.borrower.username }} <br> <!-- FIXED -->
-                                <strong>Status:</strong> 
-                                <span class="badge 
-                                    {% if request.status == 'pending' %}bg-warning
-                                    {% elif request.status == 'approved' %}bg-success
-                                    {% elif request.status == 'rejected' %}bg-danger
-                                    {% elif request.status == 'returned' %}bg-secondary
-                                    {% endif %}">
-                                    {{ request.get_status_display }} <!-- FIXED -->
-                                </span>
-
-                            </div>
-                            <div>
-                                {% if request.status == 'pending' %}
-                                    <a href="{% url 'approve_request' request.id %}" class="btn btn-success btn-sm">Approve</a>
-                                    <a href="{% url 'reject_request' request.id %}" class="btn btn-danger btn-sm">Reject</a>
-                                {% elif request.status == 'approved' %}
-                                    <a href="{% url 'mark_as_returned' request.id %}" class="btn btn-secondary btn-sm">Mark as Returned</a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="text-center">No requests received.</p>
-            {% endif %}
-        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center">No requests sent.</p>
+        {% endif %}
     </div>
-    
+
+    <!-- Right Side: Received Requests -->
+    <div class="col-md-6">
+        <h4 class="text-center">Requests Received</h4>
+        {% if received_requests %}
+            <div class="list-group">
+                {% for request in received_requests %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Item:</strong> {{ request.item.name }} <br>
+                            <strong>From:</strong> {{ request.borrower.username }} <br>
+                            <strong>Status:</strong> 
+                            <span class="badge 
+                                {% if request.status == 'pending' %}bg-warning
+                                {% elif request.status == 'approved' %}bg-success
+                                {% elif request.status == 'rejected' %}bg-danger
+                                {% elif request.status == 'returned' %}bg-secondary
+                                {% endif %}">
+                                {{ request.get_status_display }}
+                            </span> <br>
+                            <strong>To be returned on:</strong> {{ request.return_date|default:"Not set" }}  <!-- Added return date -->
+                        </div>
+                        <div>
+                            {% if request.status == 'pending' %}
+                                <a href="{% url 'approve_request' request.id %}" class="btn btn-success btn-sm">Approve</a>
+                                <a href="{% url 'reject_request' request.id %}" class="btn btn-danger btn-sm">Reject</a>
+                            {% elif request.status == 'approved' %}
+                                <a href="{% url 'mark_as_returned' request.id %}" class="btn btn-secondary btn-sm">Mark as Returned</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center">No requests received.</p>
+        {% endif %}
+    </div>
+</div>
 
 {% endblock %}
-
-
-
-
-{% if messages %}
-    <div class="mb-3">
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} text-center">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-    {% endif %}

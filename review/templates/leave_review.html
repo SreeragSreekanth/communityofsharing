@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Leave Review - NeighborLink{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Leave a Review for {{ recipient.username }}</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+    </form>
+    
+    <a href="{% url 'view_profile' recipient.id %}" class="btn btn-secondary mt-2">Cancel</a>
+</div>
+{% endblock %}

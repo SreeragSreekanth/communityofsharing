@@ -51,8 +51,12 @@
 
                         {% if user.is_authenticated and item.owner != user %}
                             <a href="{% url 'request_borrow' item.id %}" class="btn btn-warning mt-2" onclick="return confirm('Are you sure you want to borrow this item?');"><i class="fas fa-hand-holding-heart me-2"></i>Request to Borrow</a>
+                            <a href="{% url 'view_profile' item.owner.id %}" class="btn btn-primary mt-2">
+                                View {{ item.owner.username }}
+                            </a>
+                            
 
-                        {% endif %}
+                        {% endif %} 
                     </div>
                 </div>
             </div>

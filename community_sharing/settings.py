@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'resources',
     'borrow_requests',
     'notifications',
+    'review',
 ]
 
 MIDDLEWARE = [

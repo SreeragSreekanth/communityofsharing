@@ -9,6 +9,7 @@ from django.core.paginator import Paginator
 from notifications.models import Notification 
 from django.db.models import Q
 from django.utils import timezone
+# from reviews.models import Review
 
 
 
@@ -41,30 +42,47 @@ def search_items(request):
 
 @login_required
 def request_borrow(request, item_id):
-    """Allows a user to request to borrow an item."""
+    """Allows a user to request to borrow an item with a return date, even after returning it."""
     item = get_object_or_404(Item, id=item_id)
 
     if item.owner == request.user:
         messages.error(request, "You cannot borrow your own item.")
-        return redirect('item_detail', item_id=item.id)
-
-    # Check if there is already a pending request
-    existing_request = BorrowRequest.objects.filter(borrower=request.user, item=item).exists()
-    if existing_request:
-        messages.error(request, "You have already requested this item.")
         return redirect('item_detail', item.id)
 
-    # Create a new borrow request
-    BorrowRequest.objects.create(borrower=request.user, item=item, status='pending')
+    # Check if there is an active borrow request (pending or approved)
+    active_request = BorrowRequest.objects.filter(
+        borrower=request.user, item=item, status__in=['pending', 'approved']
+    ).exists()
 
-    # Notify the owner
-    Notification.objects.create(
-        user=item.owner,
-        message=f"{request.user.username} has requested to borrow {item.name}."
-    )
+    if active_request:
+        messages.error(request, "You already have an active request for this item.")
+        return redirect('item_detail', item.id)
 
-    messages.success(request, "Your borrow request has been sent.")
-    return redirect('item_detail', item.id)
+    if request.method == 'POST':
+        form = BorrowRequestForm(request.POST)
+        if form.is_valid():
+            return_date = form.cleaned_data['return_date']
+
+            BorrowRequest.objects.create(
+                borrower=request.user,
+                lender=item.owner,
+                item=item,
+                status='pending',
+                return_date=return_date  # Save return date
+            )
+
+            Notification.objects.create(
+                user=item.owner,
+                message=f"{request.user.username} has requested to borrow {item.name} until {return_date}."
+            )
+
+            messages.success(request, "Your borrow request has been sent.")
+            return redirect('manage_requests')  # Redirect to manage requests page
+    else:
+        form = BorrowRequestForm()
+
+    return render(request, 'request_borrow.html', {'form': form, 'item': item})
+
 
 @login_required
 def manage_requests(request):
@@ -114,9 +132,13 @@ def borrowed_items(request):
     """
     borrowed_items = BorrowRequest.objects.filter(
         borrower=request.user, status__in=['approved', 'returned']
-    ).select_related('item')
-    
-    return render(request, 'borrowed_items.html', {'borrowed_items': borrowed_items})
+    ).select_related('item', 'item__owner')
+
+    return render(request, 'borrowed_items.html', {
+        'borrowed_items': borrowed_items, 
+    })
+
+
 
 @login_required
 def lended_items(request):
@@ -124,10 +146,21 @@ def lended_items(request):
     Displays BorrowRequests for items owned by the current user (lended items).
     Shows requests that are either approved or returned.
     """
-    user_items = Item.objects.filter(owner=request.user)
-    
     lended_items = BorrowRequest.objects.filter(
-        item__in=user_items, status__in=['approved', 'returned']
-    ).select_related('borrower', 'item')
+        item__owner=request.user,  
+        status__in=['approved', 'returned']
+    ).select_related('item', 'borrower').order_by('-approved_at')
 
-    return render(request, 'lended_items.html', {'lended_items': lended_items})
+    # ✅ Create a dictionary to track if the owner has reviewed each request
+    # reviewed_requests = {
+    #     lend.id: Review.objects.filter(
+    #         reviewer=request.user, borrow_request=lend
+    #     ).exists()
+    #     for lend in lended_items
+    # }
+
+    return render(request, 'lended_items.html', {
+        'lended_items': lended_items,
+        # 'reviewed_requests': reviewed_requests,  # Pass dictionary to template
+    })
+
