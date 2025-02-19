@@ -28,6 +28,13 @@ class SignupForm(UserCreationForm):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Choose a username'}),
         help_text=""
     )
+    phone_number = forms.CharField(
+        required=True,
+        max_length=10,
+        validators=[MinLengthValidator(10)],
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone number'}),
+        help_text=""
+    )
     password1 = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Create a password'}),
         help_text="",
@@ -56,18 +63,11 @@ class LoginForm(AuthenticationForm):
 
 
 class EditProfileForm(forms.ModelForm):
-    phone_number = forms.CharField(
-        required=False,
-        max_length=10,
-        validators=[MinLengthValidator(10)],
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Phone number'}),
-        help_text=""
-    )
     remove_picture = forms.BooleanField(required=False, label="Remove profile picture")  # Checkbox for deletion
 
     class Meta:
         model = Profile
-        fields = ['phone_number', 'bio', 'profile_picture','remove_picture']
+        fields = ['bio', 'profile_picture','remove_picture']
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 3}),
             'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),

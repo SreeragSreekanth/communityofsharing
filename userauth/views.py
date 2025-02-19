@@ -9,19 +9,13 @@ def register(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_approved = False  # Set approval status to False by default
             user.save()
-            messages.success(request, 'Registration successful! Please wait for admin approval.')
+            messages.success(request, 'Registration successful!')
             return redirect('login')
     else:
         form = SignupForm()
     return render(request, 'register.html', {'form': form})
 
-# Login View
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from .forms import LoginForm
 
 def user_login(request):
     """Login View for existing users."""

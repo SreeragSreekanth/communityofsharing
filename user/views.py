@@ -53,6 +53,7 @@ def edit_profile(request):
 @login_required
 def view_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
+    profile = user.profile
     available_items = Item.objects.filter(owner=user)
 
     # Check if there is a completed transaction between users
@@ -72,10 +73,11 @@ def view_profile(request, user_id):
     avg_rating = round(avg_rating, 1) if avg_rating else "No ratings yet"
 
     return render(request, 'view_profile.html', {
-        'profile_user': user,
+        'profile': profile,
         'available_items': available_items,
         'user_has_borrow_request': has_borrow_request,
         'user_already_reviewed': user_already_reviewed,
         'reviews': reviews,
         'avg_rating': avg_rating,
+        'user':user
     })

@@ -12,7 +12,8 @@ urlpatterns = [
     path('',include('resources.urls')),
     path('',include('borrow_requests.urls')),
     path('',include('notifications.urls')),
-    path('',include('review.urls'))
+    path('',include('review.urls')),
+    path('',include('community_events.urls')),
 
 ]
 

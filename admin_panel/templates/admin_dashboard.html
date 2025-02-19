@@ -1,74 +1,83 @@
 {% extends 'base.html' %}
 {% block title %}Admin Dashboard - NeighborLink{% endblock %}
+
 {% block content %}
-    <h2 class="text-center">Admin Dashboard</h2>
+    <div class="container py-4">
+        <h2 class="text-center mb-4">👨‍💼 Admin Dashboard</h2>
 
-    <!-- Analytics Section -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card text-center bg-primary text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Total Users</h5>
-                    <p class="card-text display-4">{{ total_users }}</p>
+        <!-- 📊 User Analytics Section -->
+        <div class="row mb-5">
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="fas fa-users text-primary"></i> Total Users</h5>
+                        <p class="display-6 fw-bold text-dark">{{ total_users }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="fas fa-user-check text-success"></i> Approved Users</h5>
+                        <p class="display-6 fw-bold text-dark">{{ approved_users }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="fas fa-user-clock text-warning"></i> Pending Users</h5>
+                        <p class="display-6 fw-bold text-dark">{{ pending_users }}</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-center bg-success text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Approved Users</h5>
-                    <p class="card-text display-4">{{ approved_users }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-center bg-warning text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Pending Users</h5>
-                    <p class="card-text display-4">{{ pending_users }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Item Analytics Section -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card text-center bg-info text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Total Items</h5>
-                    <p class="card-text display-4">{{ total_items }}</p>
+        <!-- 📦 Item Analytics Section -->
+        <div class="row mb-5">
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="fas fa-box text-info"></i> Total Items</h5>
+                        <p class="display-6 fw-bold text-dark">{{ total_items }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="fas fa-check-circle text-success"></i> Available Items</h5>
+                        <p class="display-6 fw-bold text-dark">{{ available_items }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="fas fa-times-circle text-danger"></i> Unavailable Items</h5>
+                        <p class="display-6 fw-bold text-dark">{{ unavailable_items }}</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-center bg-success text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Available Items</h5>
-                    <p class="card-text display-4">{{ available_items }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-center bg-danger text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Unavailable Items</h5>
-                    <p class="card-text display-4">{{ unavailable_items }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Action Buttons -->
-    <div class="row">
-        <div class="col-md-6">
-            <a href="{% url 'manage_users' %}" class="btn btn-info btn-lg w-100 mb-3">Manage All Users</a>
-        </div>
-        <div class="col-md-6">
-            <a href="{% url 'pending_users' %}" class="btn btn-warning btn-lg w-100 mb-3">View Pending Users</a>
-        </div>
-        <div class="col-md-6">
-            <a href="{% url 'manage_items' %}" class="btn btn-secondary btn-lg w-100 mb-3">Manage Items</a>
+        <!-- ⚙️ Admin Actions Section -->
+        <div class="row mb-5">
+            <div class="col-md-6 mb-3">
+                <a href="{% url 'manage_users' %}" class="btn btn-primary btn-lg w-100 p-3 shadow-sm">
+                    <i class="fas fa-users-cog"></i> Manage All Users
+                </a>
+            </div>
+            <div class="col-md-6 mb-3">
+                <a href="{% url 'pending_users' %}" class="btn btn-warning btn-lg w-100 p-3 shadow-sm">
+                    <i class="fas fa-user-clock"></i> View Pending Users
+                </a>
+            </div>
+            <div class="col-md-6 mb-3">
+                <a href="{% url 'manage_items' %}" class="btn btn-secondary btn-lg w-100 p-3 shadow-sm">
+                    <i class="fas fa-boxes"></i> Manage Items
+                </a>
+            </div>
         </div>
     </div>
 {% endblock %}

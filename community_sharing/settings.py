@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'borrow_requests',
     'notifications',
     'review',
+    'community_events',
 ]
 
 MIDDLEWARE = [
@@ -61,7 +62,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'notifications.context_processors.notifications_count',  # Add this line
+                'notifications.context_processors.notifications_count',
 
             ],
         },
