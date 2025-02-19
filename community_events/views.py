@@ -10,6 +10,9 @@ from django.utils.timezone import now
 def announcements_list(request):
     announcements = Announcement.objects.all().order_by('-created_at')
 
+    if request.user.is_authenticated:
+        request.user.profile.last_checked = now()
+        request.user.profile.save()
 
     paginator = Paginator(announcements, 5)  # Show 5 announcements per page
     page_number = request.GET.get('page')
@@ -21,7 +24,9 @@ def announcements_list(request):
 @login_required
 def events_list(request):
     events = Event.objects.all().order_by('-event_date')
-
+    if request.user.is_authenticated:
+        request.user.profile.last_checked = now()
+        request.user.profile.save()
 
     paginator = Paginator(events, 5)  # Show 5 events per page
     page_number = request.GET.get('page')

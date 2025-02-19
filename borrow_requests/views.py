@@ -77,7 +77,7 @@ def request_borrow(request, item_id):
             )
 
             messages.success(request, "Your borrow request has been sent.")
-            return redirect('manage_requests')  # Redirect to manage requests page
+            return redirect('search_items')  # Redirect to manage requests page
     else:
         form = BorrowRequestForm()
 

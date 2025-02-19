@@ -63,7 +63,10 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="{% url 'manage_requests' %}">
-                                    <i class="fas fa-tasks me-2"></i> Manage Requests
+                                    <i class="fas fa-tasks me-2"></i> Manage Requests 
+                                    {% if request.pending_borrow_requests > 0 %}
+                                        <span class="badge bg-danger">{{ request.pending_borrow_requests }}</span>
+                                    {% endif %}
                                 </a>
                             </li>
                             
@@ -84,15 +87,50 @@
                                     <i class="fas fa-user me-2"></i> Profile
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="profileDropdown">
-                                    <li><a class="dropdown-item" href="{% url 'edit_profile' %}"><i class="fas fa-user-edit me-2"></i> Edit Profile</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'item_list' %}"><i class="fas fa-list-alt me-2"></i> My Listings</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'borrowed_items' %}"><i class="fas fa-hand-holding-heart me-2"></i> Borrowed Items</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'lended_items' %}"><i class="fas fa-handshake me-2"></i> Lended Items</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'announcements_list' %}"><i class="fas fa-bullhorn me-2"></i> Announcements</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'events_list' %}"><i class="fas fa-calendar-alt me-2"></i> Events</a></li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'edit_profile' %}">
+                                            <i class="fas fa-user-edit me-2"></i> Edit Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'item_list' %}">
+                                            <i class="fas fa-list-alt me-2"></i> My Listings
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'borrowed_items' %}">
+                                            <i class="fas fa-hand-holding-heart me-2"></i> Borrowed Items
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'lended_items' %}">
+                                            <i class="fas fa-handshake me-2"></i> Lended Items
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'announcements_list' %}">
+                                            <i class="fas fa-bullhorn me-2"></i> Announcements
+                                            {% if request.new_announcements_count > 0 %}
+                                                <span class="badge bg-danger">{{ request.new_announcements_count }}</span>
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'events_list' %}">
+                                            <i class="fas fa-calendar-alt me-2"></i> Events
+                                            {% if request.new_events_count > 0 %}
+                                                <span class="badge bg-danger">{{ request.new_events_count }}</span>
+                                            {% endif %}
+                                        </a>
+                                    </li>
                                     <hr class="dropdown-divider">
-                                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                        </a>
+                                    </li>
                                 </ul>
+                                
                                 
                             </li>
                             

@@ -47,6 +47,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'community_events.middleware.EventAnnouncementMiddleware',
+    'borrow_requests.middleware.BorrowRequestNotificationMiddleware',
+    'userauth.middleware.LoggingMiddleware',
+    'userauth.middleware.DisableBackAfterLogoutMiddleware',
 ]
 
 ROOT_URLCONF = 'community_sharing.urls'
@@ -147,3 +151,23 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'sreeragsreekanth236@gmail.com'
 EMAIL_HOST_PASSWORD = 'uqzn upkj ytuy pgnr'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER 
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'user_activity.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

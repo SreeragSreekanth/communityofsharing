@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils.timezone import now
+
 
 # Create your models here.
 class User(AbstractUser):
@@ -18,6 +20,8 @@ class Profile(models.Model):
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)  # Profile picture
     created_at = models.DateTimeField(auto_now_add=True)  # Timestamp for profile creation
     updated_at = models.DateTimeField(auto_now=True)  # Timestamp for profile updates
+    last_checked = models.DateTimeField(default=now)  # Stores last seen time
+
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
