@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
-
 {% load static %}
 
 {% block title %}User Dashboard - NeighborLink{% endblock %}
 
 {% block content %}
+    <!-- Display Flash Messages -->
     {% if messages %}
-     <div class="mb-3">
-         {% for message in messages %}
-             <div class="alert alert-{{ message.tags }} text-center">
-                 {{ message }}
-             </div>
-         {% endfor %}
-     </div>
+        <div class="mb-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} text-center">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
     {% endif %}
+
     <h2 class="text-center mb-4">Welcome, {{ user.username }}!</h2>
 
     <!-- Profile Section -->
@@ -22,13 +23,8 @@
         <div class="col-md-4">
             <div class="card shadow h-100 p-4 text-center" style="border-radius: 15px;">
                 <div class="mb-3">
-                    {% if profile.profile_picture %}
-                        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" 
-                             class="rounded-circle mx-auto d-block" width="120" height="120">
-                    {% else %}
-                        <img src="{% static 'assets/default.webp' %}" alt="Default Profile Picture" 
-                             class="rounded-circle mx-auto d-block" width="120" height="120">
-                    {% endif %}
+                    <img src="{{ profile.profile_picture.url|default:'/static/assets/default.webp' }}" 
+                         alt="Profile Picture" class="rounded-circle mx-auto d-block" width="120" height="120">
                 </div>
                 <h4>{{ user.username }}</h4>
                 <p class="text-muted">{{ user.email }}</p>
@@ -43,25 +39,22 @@
                 <div class="row">
                     <div class="col-md-6">
                         <ul class="list-unstyled">
-                            <li class="mb-3">
-                                <strong><i class="fas fa-user me-2"></i>Username:</strong> 
+                            <li class="mb-3"><strong><i class="fas fa-user me-2"></i>Username:</strong> 
                                 <span class="text-muted">{{ user.username }}</span>
                             </li>
-                            <li class="mb-3">
-                                <strong><i class="fas fa-envelope me-2"></i>Email:</strong> 
+                            <li class="mb-3"><strong><i class="fas fa-envelope me-2"></i>Email:</strong> 
                                 <span class="text-muted">{{ user.email }}</span>
                             </li>
-                            <li class="mb-3">
-                                <strong><i class="fas fa-phone me-2"></i>Phone Number:</strong> 
+                            <li class="mb-3"><strong><i class="fas fa-phone me-2"></i>Phone:</strong> 
                                 <span class="text-muted">{{ user.phone_number|default:"Not provided" }}</span>
                             </li>
                         </ul>
                     </div>
                     <div class="col-md-6">
                         <ul class="list-unstyled">
-                            <li class="mb-3">
-                                <strong><i class="fas fa-info-circle me-2"></i>Bio:</strong> 
-                                <span class="text-muted">{{ profile.bio|default:"Tell us about yourself!" }}</span></li>
+                            <li class="mb-3"><strong><i class="fas fa-info-circle me-2"></i>Bio:</strong> 
+                                <span class="text-muted">{{ profile.bio|default:"Tell us about yourself!" }}</span>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -106,7 +99,7 @@
                     <ul class="list-group">
                         {% for review in received_reviews %}
                             <li class="list-group-item">
-                                <strong>{{ review.reviewer.username }}</strong> 
+                                <strong>{{ review.reviewer.username }}</strong>
                                 <span class="text-warning">★ {{ review.rating }}</span>
                                 <p class="text-muted">{{ review.comment }}</p>
                                 <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
@@ -114,10 +107,9 @@
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p class="text-center">No reviews yet. Users who borrow from you or lend to you will leave reviews here.</p>
+                    <p class="text-center text-muted">No reviews yet. Your lending and borrowing interactions will be reviewed here.</p>
                 {% endif %}
             </div>
         </div>
     </div>
-
 {% endblock %}

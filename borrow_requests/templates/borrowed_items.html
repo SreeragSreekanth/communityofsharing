@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}Borrowing History{% endblock %}
+{% block title %} Borrowing History {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2 class="text-center my-4">Your Borrowing History</h2>
+<div class="container my-5">
+    <h2 class="text-center mb-4">📜 Your Borrowing History</h2>
 
     {% if borrowed_items %}
         <div class="table-responsive">
-            <table class="table table-bordered text-center">
+            <table class="table table-hover table-bordered text-center">
                 <thead class="table-dark">
                     <tr>
                         <th>#</th>
@@ -17,14 +17,14 @@
                         <th>Borrowed Date</th>
                         <th>Return Date</th>
                         <th>Status</th>
-                        <th>Profile</th>  <!-- Added Profile Column -->
+                        <th>Profile</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for request in borrowed_items %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-                            <td>{{ request.item.name }}</td>
+                            <td class="fw-bold">{{ request.item.name }}</td>
                             <td>{{ request.item.owner.username }}</td>
                             <td>{{ request.approved_at|date:"F d, Y" }}</td>
                             <td>
@@ -43,7 +43,7 @@
                             </td>
                             <td>
                                 <a href="{% url 'view_profile' request.item.owner.id %}" class="btn btn-sm btn-info">
-                                    View Profile
+                                    <i class="fas fa-user"></i> Profile
                                 </a>
                             </td> 
                         </tr>
@@ -52,7 +52,9 @@
             </table>
         </div>
     {% else %}
-        <p class="text-center">You haven't borrowed any items.</p>
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> You haven't borrowed any items.
+        </div>
     {% endif %}
 </div>
 {% endblock %}

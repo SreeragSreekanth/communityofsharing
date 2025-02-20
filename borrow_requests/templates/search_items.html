@@ -5,16 +5,16 @@
 {% block content %}
 
     {% if messages %}
-    <div class="mb-3">
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} text-center">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
+        <div class="mb-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} text-center">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
     {% endif %}
-    
-    <h2 class="text-center">Search Items</h2>
+
+    <h2 class="text-center mb-4">Search Items</h2>
 
     <!-- Search Form -->
     <div class="mb-4">
@@ -28,35 +28,43 @@
     </div>
 
     <!-- Item List -->
-    <div class="row">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for item in items %}
-            <div class="col-md-4 mb-4">
-                <div class="card shadow h-100">
+            <div class="col">
+                <div class="card shadow-sm h-100 d-flex flex-column">
+                    <!-- Image -->
                     <div style="height: 200px; overflow: hidden;">
                         {% if item.images.first %}
                             <img src="{{ item.images.first.image.url }}" alt="{{ item.name }}" 
-                                 class="card-img-top w-100 h-100 object-fit-cover">
+                                 class="card-img-top w-100 h-100" style="object-fit: cover;">
                         {% else %}
                             <img src="https://via.placeholder.com/300" alt="Placeholder Image" 
-                                 class="card-img-top w-100 h-100 object-fit-cover">
+                                 class="card-img-top w-100 h-100" style="object-fit: cover;">
                         {% endif %}
                     </div>
+
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ item.name }}</h5>
-                        <p class="card-text flex-grow-1">{{ item.description|truncatewords:10 }}</p>
-                        <p class="text-muted small">
-                            Available from {{ item.availability_start|date:"M d, Y" }} to {{ item.availability_end|date:"M d, Y" }}
+                        <p class="card-text text-muted flex-grow-1">{{ item.description|truncatewords:10 }}</p>
+                        <p class="small text-muted">
+                            Available from <strong>{{ item.availability_start|date:"M d, Y" }}</strong> 
+                            to <strong>{{ item.availability_end|date:"M d, Y" }}</strong>
                         </p>
-                        <a href="{% url 'item_detail' item.id %}" class="btn btn-primary">View Details</a>
+                        
+                        <div class="mt-auto">
+                            <a href="{% url 'item_detail' item.id %}" class="btn btn-sm btn-primary w-100">View Details</a>
 
-                        {% if user.is_authenticated and item.owner != user %}
-                            <a href="{% url 'request_borrow' item.id %}" class="btn btn-warning mt-2" onclick="return confirm('Are you sure you want to borrow this item?');"><i class="fas fa-hand-holding-heart me-2"></i>Request to Borrow</a>
-                            <a href="{% url 'view_profile' item.owner.id %}" class="btn btn-primary mt-2">
-                                View {{ item.owner.username }}
-                            </a>
-                            
-
-                        {% endif %} 
+                            {% if user.is_authenticated and item.owner != user %}
+                                <a href="{% url 'request_borrow' item.id %}" 
+                                   class="btn btn-sm btn-warning w-100 mt-2"
+                                   onclick="return confirm('Are you sure you want to borrow this item?');">
+                                    <i class="fas fa-hand-holding-heart me-2"></i>Request to Borrow
+                                </a>
+                                <a href="{% url 'view_profile' item.owner.id %}" class="btn btn-sm btn-outline-primary w-100 mt-2">
+                                    View {{ item.owner.username }}
+                                </a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -89,4 +97,5 @@
             </ul>
         </nav>
     </div>
+
 {% endblock %}

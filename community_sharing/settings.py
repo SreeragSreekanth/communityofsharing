@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'community_events.middleware.EventAnnouncementMiddleware',
     'borrow_requests.middleware.BorrowRequestNotificationMiddleware',
     'userauth.middleware.LoggingMiddleware',
-    'userauth.middleware.DisableBackAfterLogoutMiddleware',
+    'userauth.middleware.NoCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'community_sharing.urls'

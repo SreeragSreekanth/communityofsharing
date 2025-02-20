@@ -6,13 +6,24 @@
     {% if notifications %}
         <div class="list-group">
             {% for notification in notifications %}
-                <div class="list-group-item {% if not notification.is_read %}list-group-item-info{% endif %}">
-                    <p class="mb-0">{{ notification.message }}</p>
-                    <small class="text-muted">{{ notification.created_at|timesince }} ago</small>
-                </div>
+                <a href="{% if notification.link %}{{ notification.link }}{% else %}#{% endif %}" 
+                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center 
+                          {% if not notification.is_read %}list-group-item-warning fw-bold{% endif %}">
+                    
+                    <div>
+                        <p class="mb-1">{{ notification.message }}</p>
+                        <small class="text-muted">{{ notification.created_at|date:"M d, Y H:i A" }}</small>
+                    </div>
+
+                    {% if not notification.is_read %}
+                        <span class="badge bg-primary rounded-pill">New</span>
+                    {% endif %}
+                </a>
             {% endfor %}
         </div>
     {% else %}
-        <p class="text-center text-muted">You have no notifications.</p>
+        <div class="alert alert-light text-center" role="alert">
+            <i class="fas fa-bell-slash me-2"></i> No notifications yet.
+        </div>
     {% endif %}
 {% endblock %}

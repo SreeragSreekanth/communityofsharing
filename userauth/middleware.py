@@ -9,10 +9,13 @@ class LoggingMiddleware(MiddlewareMixin):
     def process_request(self, request):
         logger.info(f"User {request.user} accessed {request.path}")
 
-class DisableBackAfterLogoutMiddleware(MiddlewareMixin):
+class NoCacheMiddleware(MiddlewareMixin):
+    """
+    Middleware to prevent caching of sensitive pages.
+    """
     def process_response(self, request, response):
-        if request.path in ["/login/", "/logout/"]:  # Add other auth-related paths if needed
-            response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-            response['Pragma'] = 'no-cache'
-            response['Expires'] = '0'
+        # Prevent caching for all responses
+        response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '0'
         return response

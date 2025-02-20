@@ -9,7 +9,6 @@ from django.core.paginator import Paginator
 from notifications.models import Notification 
 from django.db.models import Q
 from django.utils import timezone
-# from reviews.models import Review
 
 
 
@@ -20,15 +19,16 @@ def search_items(request):
     form = SearchForm(request.GET or None)  # Initialize the form with GET data
     query = request.GET.get('query', '')  # Get the search query from GET parameters
 
-    # Base queryset: Exclude the user's own items and filter by availability
+    # Get items that are currently borrowed
     borrowed_item_ids = BorrowRequest.objects.filter(status='approved').values_list('item_id', flat=True)
-    # Base queryset: Exclude the user's own items and items that are currently borrowed or not returned
+
+    # Base queryset: Exclude the user's own items & filter by availability
     queryset = Item.objects.exclude(owner=request.user).exclude(id__in=borrowed_item_ids).filter(
         availability_start__lte=now,
         availability_end__gte=now
-    )
+    ).order_by('-created_at').distinct()  # Ensure stable ordering and avoid duplicates
 
-    # Apply search query if provided
+    # Apply search filter
     if query:
         queryset = queryset.filter(name__icontains=query)
 
@@ -38,6 +38,7 @@ def search_items(request):
     items = paginator.get_page(page_number)
 
     return render(request, 'search_items.html', {'form': form, 'items': items, 'query': query})
+
 
 
 @login_required

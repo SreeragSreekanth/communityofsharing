@@ -34,7 +34,7 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     {% if user.is_authenticated %}
                         {% if user.is_superuser %}
                             <!-- Admin Links -->
@@ -53,7 +53,12 @@
                                     <i class="fas fa-boxes me-2"></i> Manage Items
                                 </a>
                             </li>
-                            <li class="nav-item"><a class="nav-link text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link text-danger fw-bold" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                </a>
+                            </li>
+                
                         {% else %}
                             <!-- User Links -->
                             <li class="nav-item">
@@ -61,79 +66,60 @@
                                     <i class="fas fa-home me-2"></i> Dashboard
                                 </a>
                             </li>
-                            <li class="nav-item">
+
+                            <li class="nav-item position-relative">
                                 <a class="nav-link text-white" href="{% url 'manage_requests' %}">
-                                    <i class="fas fa-tasks me-2"></i> Manage Requests 
+                                    <i class="fas fa-tasks me-2"></i> Requests
                                     {% if request.pending_borrow_requests > 0 %}
-                                        <span class="badge bg-danger">{{ request.pending_borrow_requests }}</span>
+                                        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+                                            {{ request.pending_borrow_requests }}
+                                        </span>
                                     {% endif %}
                                 </a>
                             </li>
-                            
+
                             <li class="nav-item position-relative">
                                 <a class="nav-link text-white" href="{% url 'view_notifications' %}">
-                                    <i class="fas fa-bell me-2"></i> Notifications
+                                    <i class="fas fa-bell me-2"></i>Notifications
                                     {% if unread_count > 0 %}
-                                        <span class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle">
+                                        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
                                             {{ unread_count }}
                                         </span>
                                     {% endif %}
                                 </a>
                             </li>
-                            
+
                             <!-- Profile Dropdown -->
                             <li class="nav-item dropdown ms-3 me-lg-4">
                                 <a class="nav-link dropdown-toggle text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
                                     <i class="fas fa-user me-2"></i> Profile
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="profileDropdown">
+                                    <li><a class="dropdown-item" href="{% url 'edit_profile' %}"><i class="fas fa-user-edit me-2"></i> Edit Profile</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'item_list' %}"><i class="fas fa-list-alt me-2"></i> My Listings</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'borrowed_items' %}"><i class="fas fa-hand-holding-heart me-2"></i> Borrowed Items</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'lended_items' %}"><i class="fas fa-handshake me-2"></i> Lended Items</a></li>
                                     <li>
-                                        <a class="dropdown-item" href="{% url 'edit_profile' %}">
-                                            <i class="fas fa-user-edit me-2"></i> Edit Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'item_list' %}">
-                                            <i class="fas fa-list-alt me-2"></i> My Listings
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'borrowed_items' %}">
-                                            <i class="fas fa-hand-holding-heart me-2"></i> Borrowed Items
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'lended_items' %}">
-                                            <i class="fas fa-handshake me-2"></i> Lended Items
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'announcements_list' %}">
+                                        <a class="dropdown-item position-relative" href="{% url 'announcements_list' %}">
                                             <i class="fas fa-bullhorn me-2"></i> Announcements
                                             {% if request.new_announcements_count > 0 %}
-                                                <span class="badge bg-danger">{{ request.new_announcements_count }}</span>
+                                                <span class="badge bg-danger ms-2">{{ request.new_announcements_count }}</span>
                                             {% endif %}
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="{% url 'events_list' %}">
+                                        <a class="dropdown-item position-relative" href="{% url 'events_list' %}">
                                             <i class="fas fa-calendar-alt me-2"></i> Events
                                             {% if request.new_events_count > 0 %}
-                                                <span class="badge bg-danger">{{ request.new_events_count }}</span>
+                                                <span class="badge bg-danger ms-2">{{ request.new_events_count }}</span>
                                             {% endif %}
                                         </a>
                                     </li>
                                     <hr class="dropdown-divider">
-                                    <li>
-                                        <a class="dropdown-item text-danger" href="{% url 'logout' %}">
-                                            <i class="fas fa-sign-out-alt me-2"></i> Logout
-                                        </a>
-                                    </li>
+                                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
                                 </ul>
-                                
-                                
                             </li>
-                            
+
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="{% url 'search_items' %}">
                                     <i class="fas fa-search me-2"></i> Search Items
@@ -157,6 +143,7 @@
             </div>
         </div>
     </nav>
+
 
     <!-- Main Content -->
     <div class="flex-grow-1">

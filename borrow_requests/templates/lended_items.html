@@ -1,57 +1,62 @@
 {% extends 'base.html' %}
 
+{% block title %} Lended Items {% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">Lended Items</h2>
+<div class="container my-5">
+    <h2 class="text-center mb-4">📦 Lended Items</h2>
+
     {% if lended_items %}
-            <div class="table-responsive">
-                <table class="table table-bordered text-center">
-                    <thead class="table-dark">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Item</th>
+                        <th>Borrower</th>
+                        <th>Approved Date</th>
+                        <th>Returned Date</th>
+                        <th>Status</th>
+                        <th>Profile</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in lended_items %}
                         <tr>
-                            <th>#</th>
-                            <th>Item</th>
-                            <th>Borrower</th>
-                            <th>Approved Date</th>
-                            <th>Returned Date</th>
-                            <th>Status</th>
-                            <th>Profile</th>  <!-- Added Profile Column -->
+                            <td>{{ forloop.counter }}</td>
+                            <td class="fw-bold">{{ request.item.name }}</td>
+                            <td>{{ request.borrower.username }}</td>  
+                            <td>{{ request.approved_at|date:"F d, Y" }}</td>
+                            <td>
+                                {% if request.returned_at %}
+                                    {{ request.returned_at|date:"F d, Y" }}
+                                {% else %}
+                                    <span class="text-muted">Not Returned</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if request.status == 'returned' %}
+                                    <span class="badge bg-success">Returned</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Not Returned</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'view_profile' request.borrower.id %}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-user"></i> Profile
+                                </a>
+                            </td>  
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for request in lended_items %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ request.item.name }}</td>
-                                <td>{{ request.borrower.username }}</td>  
-                                <td>{{ request.approved_at|date:"F d, Y" }}</td>
-                                <td>
-                                    {% if request.returned_at %}
-                                        {{ request.returned_at|date:"F d, Y" }}
-                                    {% else %}
-                                        <span class="text-muted">Not Returned</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if request.status == 'returned' %}
-                                        <span class="badge bg-success">Returned</span>
-                                    {% else %}
-                                        <span class="badge bg-warning">Not Returned</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <a href="{% url 'view_profile' request.borrower.id %}" class="btn btn-sm btn-info">
-                                        View Profile
-                                    </a>
-                                </td>  
-                            </tr>
-                        {% empty %}
-                            <tr><td colspan="7" class="text-center">No items have been lended yet.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% else %}
-            <p class="text-center">You haven't lended any items.</p>
-        {% endif %}
+                    {% empty %}
+                        <tr><td colspan="7" class="text-center text-muted">No items have been lended yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> You haven't lended any items.
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

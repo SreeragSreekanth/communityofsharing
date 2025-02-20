@@ -52,32 +52,32 @@ def edit_profile(request):
 
 @login_required
 def view_profile(request, user_id):
-    user = get_object_or_404(User, id=user_id)
-    profile = user.profile
-    available_items = Item.objects.filter(owner=user)
+    profile_user = get_object_or_404(User, id=user_id)  # Rename variable to avoid conflict
+    profile = profile_user.profile
+    available_items = Item.objects.filter(owner=profile_user)
 
     # Check if there is a completed transaction between users
     has_borrow_request = BorrowRequest.objects.filter(
-        (Q(borrower=request.user, item__owner=user) | Q(borrower=user, item__owner=request.user)),
+        (Q(borrower=request.user, item__owner=profile_user) | Q(borrower=profile_user, item__owner=request.user)),
         status="returned"
     ).exists()
 
     # Check if the logged-in user has already reviewed this user
-    user_already_reviewed = Review.objects.filter(reviewer=request.user, recipient=user).exists()
+    user_already_reviewed = Review.objects.filter(reviewer=request.user, recipient=profile_user).exists()
 
     # Get all reviews for this user
-    reviews = Review.objects.filter(recipient=user).select_related('reviewer')
+    reviews = Review.objects.filter(recipient=profile_user).select_related('reviewer')
 
     # Calculate average rating
     avg_rating = reviews.aggregate(Avg('rating'))['rating__avg']
     avg_rating = round(avg_rating, 1) if avg_rating else "No ratings yet"
 
     return render(request, 'view_profile.html', {
-        'profile': profile,
+        'profile_user': profile_user,  # Use this in template instead of 'user'
         'available_items': available_items,
         'user_has_borrow_request': has_borrow_request,
         'user_already_reviewed': user_already_reviewed,
         'reviews': reviews,
         'avg_rating': avg_rating,
-        'user':user
     })
+
