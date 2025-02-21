@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
 
-    path('admindash', views.admin_dashboard, name='admin_dashboard'),  # Admin dashboard
+    path('admindash/', views.admin_dashboard, name='admin_dashboard'),  # Admin dashboard
     path('manage-users/', views.manage_users, name='manage_users'),
     path('pending-users/', views.pending_users, name='pending_users'),
     path('approve-user/<int:user_id>/', views.approve_user, name='approve_user'),

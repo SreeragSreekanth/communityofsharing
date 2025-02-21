@@ -9,11 +9,13 @@ from django.core.paginator import Paginator
 from notifications.models import Notification 
 from django.db.models import Q
 from django.utils import timezone
+from user.decorators import user_only
 
 
 
 
 @login_required
+@user_only
 def search_items(request):
     now = timezone.now().date()  # Get the current date
     form = SearchForm(request.GET or None)  # Initialize the form with GET data
@@ -42,6 +44,7 @@ def search_items(request):
 
 
 @login_required
+@user_only
 def request_borrow(request, item_id):
     """Allows a user to request to borrow an item with a return date, even after returning it."""
     item = get_object_or_404(Item, id=item_id)
@@ -86,6 +89,7 @@ def request_borrow(request, item_id):
 
 
 @login_required
+@user_only
 def manage_requests(request):
     """Display both sent and received borrow requests."""
     sent_requests = BorrowRequest.objects.filter(borrower=request.user).order_by('-requested_at')
@@ -95,6 +99,7 @@ def manage_requests(request):
         'sent_requests': sent_requests,
         'received_requests': received_requests,
     })
+
 
 def approve_request(request, request_id):
     borrow_request = get_object_or_404(BorrowRequest, id=request_id)
@@ -127,13 +132,14 @@ def mark_as_returned(request, request_id):
 
 
 @login_required
+@user_only
 def borrowed_items(request):
     """
     Displays BorrowRequests accepted by the current user (borrowed items).
     """
     borrowed_items = BorrowRequest.objects.filter(
         borrower=request.user, status__in=['approved', 'returned']
-    ).select_related('item', 'item__owner')
+    ).select_related('item', 'item__owner').order_by('-approved_at')
 
     return render(request, 'borrowed_items.html', {
         'borrowed_items': borrowed_items, 
@@ -142,6 +148,7 @@ def borrowed_items(request):
 
 
 @login_required
+@user_only
 def lended_items(request):
     """
     Displays BorrowRequests for items owned by the current user (lended items).
@@ -152,13 +159,6 @@ def lended_items(request):
         status__in=['approved', 'returned']
     ).select_related('item', 'borrower').order_by('-approved_at')
 
-    # ✅ Create a dictionary to track if the owner has reviewed each request
-    # reviewed_requests = {
-    #     lend.id: Review.objects.filter(
-    #         reviewer=request.user, borrow_request=lend
-    #     ).exists()
-    #     for lend in lended_items
-    # }
 
     return render(request, 'lended_items.html', {
         'lended_items': lended_items,

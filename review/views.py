@@ -6,11 +6,13 @@ from .forms import ReviewForm
 from borrow_requests.models import BorrowRequest
 from django.db.models import Q
 from django.contrib.auth import get_user_model
+from user.decorators import user_only
 
 
 User = get_user_model()
 
 @login_required
+@user_only
 def leave_review(request, user_id):
     recipient = get_object_or_404(User, id=user_id)
 
@@ -51,6 +53,7 @@ def leave_review(request, user_id):
 
 
 @login_required
+@user_only
 def edit_review(request, review_id):
     review = get_object_or_404(Review, id=review_id, reviewer=request.user)
 

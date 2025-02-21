@@ -4,9 +4,11 @@ from .models import Announcement, Event
 from .forms import AnnouncementForm, EventForm
 from django.core.paginator import Paginator
 from django.utils.timezone import now
+from user.decorators import user_only
 
 
 @login_required
+@user_only
 def announcements_list(request):
     announcements = Announcement.objects.all().order_by('-created_at')
 
@@ -22,8 +24,9 @@ def announcements_list(request):
 
 
 @login_required
+@user_only
 def events_list(request):
-    events = Event.objects.all().order_by('-event_date')
+    events = Event.objects.all().order_by('-created_at')
     if request.user.is_authenticated:
         request.user.profile.last_checked = now()
         request.user.profile.save()
@@ -36,6 +39,7 @@ def events_list(request):
 
 # Create Announcement
 @login_required
+@user_only
 def create_announcement(request):
     if request.method == "POST":
         form = AnnouncementForm(request.POST)
@@ -48,8 +52,10 @@ def create_announcement(request):
         form = AnnouncementForm()
     return render(request, 'announcement_form.html', {'form': form, 'title': 'Create Announcement'})
 
+
 # Edit Announcement
 @login_required
+@user_only
 def edit_announcement(request, pk):
     announcement = get_object_or_404(Announcement, pk=pk, created_by=request.user)
     if request.method == "POST":
@@ -70,6 +76,7 @@ def delete_announcement(request, pk):
 
 # Create Event
 @login_required
+@user_only
 def create_event(request):
     if request.method == "POST":
         form = EventForm(request.POST)
@@ -84,6 +91,7 @@ def create_event(request):
 
 # Edit Event
 @login_required
+@user_only
 def edit_event(request, pk):
     event = get_object_or_404(Event, pk=pk, created_by=request.user)
     if request.method == "POST":

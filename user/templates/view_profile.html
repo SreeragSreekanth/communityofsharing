@@ -22,8 +22,13 @@
         <div class="col-md-8">
             <div class="card shadow p-4" style="border-radius: 15px;">
                 <div class="text-center mb-4">
-                    <img src="{{ profile_user.profile.profile_picture.url|default:'/static/assets/default.webp' }}" 
-                         alt="Profile Picture" class="rounded-circle mx-auto d-block" width="120" height="120">
+                    {% if profile.profile_picture and profile.profile_picture.name %}
+                        <img src="{{ profile.profile_picture.url }}" 
+                             alt="Profile Picture" class="rounded-circle mx-auto d-block" width="120" height="120">
+                    {% else %}
+                        <img src="{% static 'assets/default.webp' %}" 
+                             alt="Default Profile Picture" class="rounded-circle mx-auto d-block" width="120" height="120">
+                    {% endif %}
                 </div>
 
                 <!-- Profile Details -->

@@ -24,11 +24,12 @@
 
                 <!-- Display Current Profile Picture inside the form -->
                 <div class="mb-3 text-center">
-                    {% if profile.profile_picture %}
+                    {% if profile.profile_picture and profile.profile_picture.name %}
                         <img id="preview" src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" width="150" height="150">
                     {% else %}
                         <img id="preview" src="{% static 'assets/default.webp' %}" alt="Default Profile Picture" class="rounded-circle" width="150" height="150">
                     {% endif %}
+
 
                 </div>
 

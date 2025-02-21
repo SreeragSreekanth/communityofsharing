@@ -36,7 +36,7 @@
                     <div style="height: 200px; overflow: hidden;">
                         {% if item.images.first %}
                             <img src="{{ item.images.first.image.url }}" alt="{{ item.name }}" 
-                                 class="card-img-top w-100 h-100" style="object-fit: cover;">
+                                 class="card-img-top w-100 h-100" style="object-fit: contain;">
                         {% else %}
                             <img src="https://via.placeholder.com/300" alt="Placeholder Image" 
                                  class="card-img-top w-100 h-100" style="object-fit: cover;">

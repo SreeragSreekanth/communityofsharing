@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Notification
+from user.decorators import user_only
 
 @login_required
+@user_only
 def view_notifications(request):
     # Fetch all notifications for the logged-in user
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')

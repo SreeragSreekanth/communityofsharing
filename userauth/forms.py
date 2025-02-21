@@ -74,4 +74,11 @@ class EditProfileForm(forms.ModelForm):
 
         }
 
-    
+    def clean(self):
+        cleaned_data = super().clean()
+        remove_picture = cleaned_data.get("remove_picture")
+
+        if remove_picture:
+            cleaned_data["profile_picture"] = None  # Ensure the field is set to None
+
+        return cleaned_data

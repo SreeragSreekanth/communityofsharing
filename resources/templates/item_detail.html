@@ -34,7 +34,7 @@
                             {% for image in item.images.all %}
                                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
                                     <div style="height: 400px; overflow: hidden;">
-                                        <img src="{{ image.image.url }}" class="d-block w-100 h-100 object-fit-cover" 
+                                        <img src="{{ image.image.url }}" class="d-block w-100 h-100" style="object-fit: contain;"
                                              alt="{{ item.name }}">
                                     </div>
                                 </div>

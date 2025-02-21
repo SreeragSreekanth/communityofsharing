@@ -10,6 +10,7 @@ from datetime import date
 from borrow_requests.models import BorrowRequest
 from django.db.models import Q
 from review.models import Review
+from user.decorators import user_only
 
 
 
@@ -18,6 +19,7 @@ User = get_user_model()
 
 # User Dashboard View
 @login_required
+@user_only
 def user_dashboard(request):
     profile = request.user.profile
 
@@ -32,22 +34,25 @@ def user_dashboard(request):
 
 # Edit Profile View
 @login_required
+@user_only
 def edit_profile(request):
-    profile = request.user.profile
+    profile, created = Profile.objects.get_or_create(user=request.user)  # Ensure profile exists
+
     if request.method == 'POST':
         form = EditProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
-            if form.cleaned_data.get('remove_picture'):  # Check if the user wants to remove the image
-                profile.profile_picture.delete(save=False)  # Delete the image file
-                profile.profile_picture = None 
+            if form.cleaned_data.get('remove_picture'):
+                if profile.profile_picture  and profile.profile_picture.name != "profile_pics/default.webp":  # Ensure profile_picture exists before deleting
+                    profile.profile_picture.delete(save=False)  # Delete the file
+                profile.profile_picture = "profile_pics/default.webp"  # Set profile_picture to None
             form.save()
             messages.success(request, "Your profile has been updated successfully.")
             return redirect('user_dashboard')
     else:
         form = EditProfileForm(instance=profile)
-    
-    context = {'form': form,'profile': profile}
-    return render(request, 'edit_profile.html', context)
+
+    return render(request, 'edit_profile.html', {'form': form, 'profile': profile})
+
 
 
 @login_required

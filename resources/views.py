@@ -9,9 +9,11 @@ from borrow_requests.forms import BorrowRequestForm
 from notifications.models import Notification
 from django.contrib import messages
 from django.utils import timezone
+from user.decorators import user_only
 
 
 @login_required
+@user_only
 def create_item(request):
     if request.method == 'POST':
         item_form = ItemForm(request.POST)
@@ -32,7 +34,9 @@ def create_item(request):
     context = {'item_form': item_form}
     return render(request, 'create_item.html', context)
 
+
 @login_required
+@user_only
 def edit_item(request, item_id):
     item = get_object_or_404(Item, id=item_id, owner=request.user)
 
@@ -61,12 +65,15 @@ def edit_item(request, item_id):
     context = {'item_form': item_form, 'item': item}
     return render(request, 'edit_item.html', context)
 
+
 @login_required
 def delete_item(request, item_id):
     item = get_object_or_404(Item, id=item_id, owner=request.user)
     item.delete()
     return redirect('item_list')
 
+@login_required
+@user_only
 def item_list(request):
     items = Item.objects.filter(owner=request.user)
     context = {'items': items}
