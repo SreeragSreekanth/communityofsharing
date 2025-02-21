@@ -10,6 +10,7 @@ from notifications.models import Notification
 from django.db.models import Q
 from django.utils import timezone
 from user.decorators import user_only
+from django.utils.timezone import now
 
 
 
@@ -91,6 +92,57 @@ def request_borrow(request, item_id):
 @login_required
 @user_only
 def manage_requests(request):
+    today = now().date()
+
+    # Get all overdue requests
+    overdue_requests = BorrowRequest.objects.filter(
+        status='approved', 
+        return_date__lt=today
+    )
+
+    count = overdue_requests.count()
+
+    # Process each overdue request
+    for req in overdue_requests:
+        req.status = 'overdue'
+        req.save()
+
+        # Send notification to the borrower
+        Notification.objects.create(
+            user=req.borrower,
+            message=f"Your borrow request for '{req.item.name}' is now overdue. Please return it as soon as possible.",
+        )
+
+        Notification.objects.create(
+            user=req.lender,
+            message=f"The item '{req.item.name}' you lended is now overdue.",
+        )
+
+        # Auto-decline pending requests if the return date is overdue
+    timed_out_requests = BorrowRequest.objects.filter(
+        return_date__lt=today,  
+        status='pending'
+    )
+
+    for borrow_request in timed_out_requests:
+        borrow_request.status = 'timed_out'  # Auto-decline
+        borrow_request.save()
+        messages.info(request, f"Your borrow request for '{borrow_request.item.name}' has timed out.")
+
+        # Notify borrower
+        Notification.objects.create(
+            user=borrow_request.borrower,
+            message=f"Your borrow request for '{borrow_request.item.name}' has timed out."
+        )
+
+        Notification.objects.create(
+            user=borrow_request.lender,
+            message=f"The borrow request for '{borrow_request.item.name}' from '{borrow_request.borrower}' has timed out."
+        )
+
+    # Show message if any were marked overdue
+    if count > 0:
+        messages.warning(request, f"{count} request(s) marked as overdue.")
     """Display both sent and received borrow requests."""
     sent_requests = BorrowRequest.objects.filter(borrower=request.user).order_by('-requested_at')
     received_requests = BorrowRequest.objects.filter(item__owner=request.user).order_by('-requested_at')
