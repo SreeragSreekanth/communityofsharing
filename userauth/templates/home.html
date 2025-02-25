@@ -36,7 +36,9 @@
             Whether you're looking to lend, borrow, or connect, NeighborLink makes it easy to share resources
             and build stronger neighborhoods.
         </p>
+        {% if not user.is_authenticated %}
         <div class="d-flex justify-content-center mt-4 ">
             <a href="{% url 'register' %}" class="btn btn-lg" style="background-color: #6f42c1; color: white; border: none;">Get Started</a>
         </div>    </div>
+        {% endif %}
 {% endblock %}

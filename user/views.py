@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from userauth.models import Profile
-from userauth.forms import EditProfileForm
+from userauth.forms import EditProfileForm,PasswordChangeCustomForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.db.models import Avg
@@ -11,7 +11,7 @@ from borrow_requests.models import BorrowRequest
 from django.db.models import Q
 from review.models import Review
 from user.decorators import user_only
-
+from django.contrib.auth import update_session_auth_hash
 
 
 
@@ -86,3 +86,19 @@ def view_profile(request, user_id):
         'avg_rating': avg_rating,
     })
 
+
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeCustomForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Keep the user logged in after password change
+            update_session_auth_hash(request, user)
+            messages.success(request, "Your password has been updated successfully!")
+            return redirect('user_dashboard')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = PasswordChangeCustomForm(request.user)
+    
+    return render(request, 'change_password.html', {'form': form})

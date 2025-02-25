@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SignupForm, LoginForm
+from .forms import SignupForm, LoginForm,CustomPasswordResetForm
+
 
 # Signup View
 def register(request):
@@ -61,3 +62,22 @@ def user_logout(request):
 
 def home(request):
     return render(request, 'home.html')
+
+
+def password_reset(request):
+    if request.method == 'POST':
+        form = CustomPasswordResetForm(request.POST)
+        if form.is_valid():
+            form.save(
+                request=request,
+                email_template_name='password_reset_email.html',
+                subject_template_name='password_reset_subject.txt'
+            )
+            messages.success(request, "A temporary password has been sent to your email.")
+            return redirect('password_reset_done')
+        else:
+            messages.error(request, "No active account found with that email address.")
+    else:
+        form = CustomPasswordResetForm()
+    
+    return render(request, 'password_reset.html', {'form': form})

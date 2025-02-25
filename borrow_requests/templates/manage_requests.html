@@ -35,7 +35,7 @@
                                         {% elif request.status == 'rejected' %}bg-danger
                                         {% elif request.status == 'returned' %}bg-secondary
                                         {% elif request.status == 'overdue' %}bg-secondary
-                                        {% elif request.status == 'timed_out' %}bg-secondary
+                                        {% elif request.status == 'timed_out' %}bg-info
                                         {% endif %}">
                                         {{ request.get_status_display }}
                                     </span>
@@ -71,6 +71,8 @@
                                             {% elif request.status == 'approved' %}bg-success
                                             {% elif request.status == 'rejected' %}bg-danger
                                             {% elif request.status == 'returned' %}bg-secondary
+                                            {% elif request.status == 'overdue' %}bg-primary
+                                            {% elif request.status == 'timed_out' %}bg-info
                                             {% endif %}">
                                             {{ request.get_status_display }}
                                         </span>

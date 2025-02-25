@@ -16,7 +16,6 @@ User = get_user_model()
 def leave_review(request, user_id):
     recipient = get_object_or_404(User, id=user_id)
 
-    # Check if the logged-in user has a completed transaction with the recipient
     has_transaction = BorrowRequest.objects.filter(
         (Q(borrower=request.user, item__owner=recipient) |
          Q(borrower=recipient, item__owner=request.user)),
@@ -27,14 +26,15 @@ def leave_review(request, user_id):
         messages.error(request, "You can only review users you've completed a transaction with.")
         return redirect('view_profile', user_id=recipient.id)
 
-    # Check if the user already left a review
     if Review.objects.filter(reviewer=request.user, recipient=recipient).exists():
         messages.warning(request, "You have already reviewed this user.")
         return redirect('view_profile', user_id=recipient.id)
 
     if request.method == "POST":
         form = ReviewForm(request.POST)
+        print("POST data received:", request.POST)  # Debug
         if form.is_valid():
+            print("Form is valid, saving:", form.cleaned_data)  # Debug
             review = form.save(commit=False)
             review.reviewer = request.user
             review.recipient = recipient
@@ -46,11 +46,12 @@ def leave_review(request, user_id):
             review.save()
             messages.success(request, "Review submitted successfully.")
             return redirect('view_profile', user_id=recipient.id)
+        else:
+            print("Form validation failed, errors:", form.errors)  # Debug
     else:
         form = ReviewForm()
 
     return render(request, 'leave_review.html', {'form': form, 'recipient': recipient})
-
 
 @login_required
 @user_only
