@@ -2,10 +2,10 @@ from django import forms
 from .models import Review
 
 class ReviewForm(forms.ModelForm):
+    rating = forms.IntegerField(
+        widget=forms.HiddenInput()  # We'll use JavaScript for the star input
+    )
+
     class Meta:
         model = Review
-        fields = ['rating', 'comment']
-        widgets = {
-            'rating': forms.Select(choices=[(i, i) for i in range(1, 6)], attrs={'class': 'form-control'}),
-            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-        }
+        fields = ["rating", "comment"]

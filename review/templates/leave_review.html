@@ -1,18 +1,38 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}Leave Review - NeighborLink{% endblock %}
-
+{% block title %}Leave a Review{% endblock %}
 {% block content %}
-<div class="container mt-4">
-    <h2>Leave a Review for {{ recipient.username }}</h2>
-    
-    <form method="post">
+
+<div class="container">
+    <h2 class="text-center mb-4">Leave a Review for {{ recipient.username }}</h2>
+
+    <form method="post" class="card p-4 shadow w-50 mx-auto">
         {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-primary">Submit Review</button>
+
+        <!-- Star Rating -->
+        <label>Rating:</label>
+        <div class="star-rating mb-3">
+            <i class="fa fa-star" data-value="1"></i>
+            <i class="fa fa-star" data-value="2"></i>
+            <i class="fa fa-star" data-value="3"></i>
+            <i class="fa fa-star" data-value="4"></i>
+            <i class="fa fa-star" data-value="5"></i>
+        </div>
+
+        <!-- Hidden Input for Rating Value -->
+        {{ form.rating|as_crispy_field }}
+
+        <!-- Comment Box -->
+        {{ form.comment|as_crispy_field }}
+
+        <button type="submit" class="btn btn-primary w-100">Submit Review</button>
     </form>
-    
-    <a href="{% url 'view_profile' recipient.id %}" class="btn btn-secondary mt-2">Cancel</a>
 </div>
+
+<!-- Link external CSS and JS -->
+<link rel="stylesheet" href="{% static 'css/review.css' %}">
+<script src="{% static 'js/review.js' %}"></script>
+
 {% endblock %}

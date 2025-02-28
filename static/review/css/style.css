@@ -1,0 +1,11 @@
+/* static/css/review.css */
+.star-rating i {
+    font-size: 30px;
+    color: gray;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.star-rating .selected {
+    color: gold;
+}

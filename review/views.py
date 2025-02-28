@@ -32,7 +32,6 @@ def leave_review(request, user_id):
 
     if request.method == "POST":
         form = ReviewForm(request.POST)
-        print("POST data received:", request.POST)  # Debug
         if form.is_valid():
             print("Form is valid, saving:", form.cleaned_data)  # Debug
             review = form.save(commit=False)
