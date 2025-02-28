@@ -12,6 +12,8 @@ from django.db.models import Q
 from review.models import Review
 from user.decorators import user_only
 from django.contrib.auth import update_session_auth_hash
+from django.utils import timezone
+
 
 
 
@@ -57,11 +59,20 @@ def edit_profile(request):
 
 @login_required
 def view_profile(request, user_id):
-    profile_user = get_object_or_404(User, id=user_id)  # Rename variable to avoid conflict
+    profile_user = get_object_or_404(User, id=user_id)
     profile = profile_user.profile
-    available_items = Item.objects.filter(owner=profile_user)
+    now = timezone.now().date()
 
-    # Check if there is a completed transaction between users
+    # Get items owned by the user that are available for borrowing
+    borrowed_item_ids = BorrowRequest.objects.filter(status='approved').values_list('item_id', flat=True)
+    
+    available_items = Item.objects.filter(
+        owner=profile_user,
+        availability_start__lte=now,
+        availability_end__gte=now
+    ).exclude(id__in=borrowed_item_ids)
+
+    # Check if there is a completed transaction between users (for reviewing eligibility)
     has_borrow_request = BorrowRequest.objects.filter(
         (Q(borrower=request.user, item__owner=profile_user) | Q(borrower=profile_user, item__owner=request.user)),
         status="returned"
@@ -78,14 +89,13 @@ def view_profile(request, user_id):
     avg_rating = round(avg_rating, 1) if avg_rating else "No ratings yet"
 
     return render(request, 'view_profile.html', {
-        'profile_user': profile_user,  # Use this in template instead of 'user'
+        'profile_user': profile_user,
         'available_items': available_items,
         'user_has_borrow_request': has_borrow_request,
         'user_already_reviewed': user_already_reviewed,
         'reviews': reviews,
         'avg_rating': avg_rating,
     })
-
 
 def change_password(request):
     if request.method == 'POST':

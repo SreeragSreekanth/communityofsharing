@@ -62,6 +62,32 @@
         </div>
     </div>
 
+    <!-- Available Items for Borrowing -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <h3 class="text-center mb-4">Available Items for Borrowing</h3>
+            {% if available_items %}
+                <div class="row">
+                    {% for item in available_items %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card shadow-sm">
+                                <img src="{{ item.images.first.image.url }}" class="card-img-top" alt="{{ item.name }}">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ item.name }}</h5>
+                                    <p class="text-muted">{{ item.description }}</p>
+                                    <p><strong>Available:</strong> {{ item.availability_start }} to {{ item.availability_end }}</p>
+                                    <a href="{% url 'item_detail' item.id %}" class="btn btn-primary btn-sm">View Item</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-center text-muted">No available items for borrowing.</p>
+            {% endif %}
+        </div>
+    </div>
+
     <!-- Leave Review Section -->
     {% if user_has_borrow_request and not user_already_reviewed %}
         <div class="row justify-content-center mt-4">

@@ -82,6 +82,15 @@
                             {% endif %}
                         </span>
                     </p>
+                    <!-- Quantity (Only show if it exists) -->
+                    {% if item.quantity %}
+                    <p><strong>Quantity:</strong> <span class="text-muted">{{ item.quantity }}</span></p>
+                    {% endif %}
+
+                    <!-- Expiry Date (Only show if it exists) -->
+                    {% if item.expiry_date %}
+                    <p><strong>Expiry Date:</strong> <span class="badge bg-danger">{{ item.expiry_date|date:"M d, Y" }}</span></p>
+                    {% endif %}
 
                     <p><strong>Owner:</strong> 
                         <span class="text-muted">{{ item.owner.username }}</span>
